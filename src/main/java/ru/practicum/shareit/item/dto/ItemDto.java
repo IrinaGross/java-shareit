@@ -1,7 +1,9 @@
 package ru.practicum.shareit.item.dto;
 
-/**
- * TODO Sprint add-controllers.
- */
-public class ItemDto {
+public interface ItemDto {
+    String getName();
+
+    String getDescription();
+
+    Boolean getAvailable();
 }
