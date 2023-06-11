@@ -11,12 +11,16 @@ import java.util.stream.Collectors;
 @Repository
 class InMemoryItemRepository implements ItemRepository {
     private Long lastId = 0L;
-    private final HashMap<Long, HashMap<Long, Item>> items = new HashMap<>();
+    private final HashMap<Long, List<Long>> userItemsIds = new HashMap<>();
+    private final HashMap<Long, Item> allItems = new HashMap<>();
 
     @NonNull
     @Override
     public List<Item> getItems(@NonNull Long userId) {
-        return new ArrayList<>(items.get(userId).values());
+        return userItemsIds.get(userId)
+                .stream()
+                .map(allItems::get)
+                .collect(Collectors.toList());
     }
 
     @NonNull
@@ -27,24 +31,27 @@ class InMemoryItemRepository implements ItemRepository {
                 .id(id)
                 .idOwner(userId)
                 .build();
-        HashMap<Long, Item> set = getOrEmpty(items, userId);
-        set.put(id, newItem);
-        items.put(userId, set);
+        List<Long> list = getOrEmpty(userItemsIds, userId);
+        list.add(id);
+        userItemsIds.put(userId, list);
+        allItems.put(id, newItem);
         return newItem;
     }
 
     @Override
     public void deleteItem(@NonNull Long userId, @NonNull Long itemId) {
-        HashMap<Long, Item> set = getOrEmpty(items, userId);
-        getOrThrow(set, itemId);
-        set.remove(itemId);
+        List<Long> list = getOrEmpty(userItemsIds, userId);
+        getOrThrow(list, allItems, itemId);
+        allItems.remove(itemId);
+        list.remove(itemId);
+        userItemsIds.put(userId, list);
     }
 
     @NonNull
     @Override
     public Item update(@NonNull Long userId, @NonNull Item item) {
-        HashMap<Long, Item> set = getOrEmpty(items, userId);
-        Item saved = getOrThrow(set, item.getId());
+        List<Long> userItems = getOrEmpty(this.userItemsIds, userId);
+        Item saved = getOrThrow(userItems, allItems, item.getId());
         Boolean possibleNewAvailable = item.getAvailable();
         String possibleNewName = item.getName();
         String possibleNewDescription = item.getDescription();
@@ -53,16 +60,14 @@ class InMemoryItemRepository implements ItemRepository {
                 .name(possibleNewName == null ? saved.getName() : possibleNewName)
                 .description(possibleNewDescription == null ? saved.getDescription() : possibleNewDescription)
                 .build();
-        set.put(item.getId(), updated);
-        items.put(userId, set);
+        allItems.put(item.getId(), updated);
         return updated;
     }
 
     @NonNull
     @Override
     public Item getItem(@NonNull Long itemId) {
-        return items.values().stream()
-                .flatMap(it -> it.values().stream())
+        return allItems.values().stream()
                 .filter(it -> Objects.equals(it.getId(), itemId))
                 .findAny()
                 .orElseThrow(() -> new NotFoundException(String.format("Вещь с идентефикатором %1$s не найдена", itemId)));
@@ -74,8 +79,7 @@ class InMemoryItemRepository implements ItemRepository {
         if (text.isEmpty()) {
             return Collections.emptyList();
         }
-        return items.values().stream()
-                .flatMap(it -> it.values().stream())
+        return allItems.values().stream()
                 .filter(it -> it.getName().toLowerCase().contains(text.toLowerCase()) ||
                         it.getDescription().toLowerCase().contains(text.toLowerCase()))
                 .filter(Item::getAvailable)
@@ -83,19 +87,20 @@ class InMemoryItemRepository implements ItemRepository {
     }
 
     @NonNull
-    private Item getOrThrow(@NonNull HashMap<Long, Item> map, @NonNull Long itemId) {
-        Item item = map.get(itemId);
-        if (item == null) {
+    private static Item getOrThrow(@NonNull List<Long> userItems, @NonNull HashMap<Long, Item> allItems, @NonNull Long itemId) {
+        boolean exist = userItems.contains(itemId);
+        Item item = allItems.get(itemId);
+        if (item == null || !exist) {
             throw new NotFoundException(String.format("Вещь с идентефикатором %1$s не найдена", itemId));
         }
         return item;
     }
 
-    private static HashMap<Long, Item> getOrEmpty(HashMap<Long, HashMap<Long, Item>> map, Long key) {
-        HashMap<Long, Item> hashSet = map.get(key);
-        if (hashSet == null) {
-            return new HashMap<>();
+    private static List<Long> getOrEmpty(HashMap<Long, List<Long>> map, Long key) {
+        List<Long> list = map.get(key);
+        if (list == null) {
+            return new ArrayList<>();
         }
-        return hashSet;
+        return list;
     }
 }
