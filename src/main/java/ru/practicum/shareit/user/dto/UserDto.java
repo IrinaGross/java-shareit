@@ -1,10 +1,23 @@
 package ru.practicum.shareit.user.dto;
 
-public interface UserDto {
+import lombok.Builder;
+import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 
-    Long getId();
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
-    String getName();
-
-    String getEmail();
+@Data
+@Builder
+@Jacksonized
+public class UserDto {
+    @Builder.Default
+    private final Long id = null;
+    @NotNull(groups = {CreateUserGroup.class})
+    @NotEmpty(groups = {CreateUserGroup.class})
+    private final String name;
+    @NotNull(groups = {CreateUserGroup.class})
+    @Email(groups = {CreateUserGroup.class})
+    private final String email;
 }
