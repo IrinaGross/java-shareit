@@ -1,7 +1,6 @@
 package ru.practicum.shareit.user.repository;
 
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.ConflictException;
 import ru.practicum.shareit.NotFoundException;
 import ru.practicum.shareit.user.model.User;
@@ -11,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-@Repository
+//@Repository
 class InMemoryUserRepository implements UserRepository {
     private Long lastId = 0L;
     private final HashMap<Long, User> users = new HashMap<>();

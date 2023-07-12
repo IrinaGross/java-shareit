@@ -1,14 +1,13 @@
 package ru.practicum.shareit.item.repository;
 
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Repository
+//@Repository
 class InMemoryItemRepository implements ItemRepository {
     private Long lastId = 0L;
     private final HashMap<Long, List<Long>> userItemsIds = new HashMap<>();

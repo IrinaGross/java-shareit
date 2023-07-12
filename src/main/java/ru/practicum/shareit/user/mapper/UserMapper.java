@@ -1,7 +1,10 @@
 package ru.practicum.shareit.user.mapper;
 
+import ru.practicum.shareit.user.db.UserEntity;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
+
+import java.util.Collections;
 
 public class UserMapper {
 
@@ -18,6 +21,32 @@ public class UserMapper {
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
+                .build();
+    }
+
+    public static UserEntity map(User model, Long userId) {
+        return UserEntity.builder()
+                .id(userId)
+                .name(model.getName())
+                .email(model.getEmail())
+                .items(Collections.emptyList())
+                .build();
+    }
+
+    public static User map(UserEntity entity) {
+        return User.builder()
+                .name(entity.getName())
+                .email(entity.getEmail())
+                .id(entity.getId())
+                .build();
+    }
+
+    public static UserEntity merge(User model, UserEntity entity) {
+        return UserEntity.builder()
+                .id(entity.getId())
+                .name(model.getName() == null ? entity.getName() : model.getName())
+                .email(model.getEmail() == null ? entity.getEmail() : model.getEmail())
+                .items(Collections.emptyList())
                 .build();
     }
 }
