@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
+import ru.practicum.shareit.booking.db.BookingEntity;
 import ru.practicum.shareit.item.db.ItemEntity;
 
 import javax.persistence.*;
@@ -31,4 +32,7 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user")
     private Collection<ItemEntity> items;
+
+    @OneToMany(mappedBy = "user")
+    private Collection<BookingEntity> requests;
 }

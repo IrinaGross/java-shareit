@@ -21,18 +21,18 @@ public class UserController {
     @PostMapping
     public UserDto create(@RequestBody @Validated(CreateUserGroup.class) UserDto userDto) {
         User user = UserMapper.map(userDto, null);
-        return UserMapper.map(service.addUser(user));
+        return UserMapper.mapToDto(service.addUser(user));
     }
 
     @GetMapping("/{userId}")
     public UserDto getUser(@PathVariable("userId") Long userId) {
-        return UserMapper.map(service.getUser(userId));
+        return UserMapper.mapToDto(service.getUser(userId));
     }
 
     @GetMapping
     public List<UserDto> findAll() {
         return service.getAllUsers().stream()
-                .map(UserMapper::map)
+                .map(UserMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -42,7 +42,7 @@ public class UserController {
             @RequestBody UserDto userDto
     ) {
         User user = UserMapper.map(userDto, userId);
-        return UserMapper.map(service.updateUser(user));
+        return UserMapper.mapToDto(service.updateUser(user));
     }
 
     @DeleteMapping("/{userId}")

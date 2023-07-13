@@ -1,10 +1,18 @@
 package ru.practicum.shareit.item.mapper;
 
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.db.ItemEntity;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ShortBookingDto;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.db.UserEntity;
+import ru.practicum.shareit.user.mapper.UserMapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+@NoArgsConstructor
 public class ItemMapper {
 
     public static Item map(ItemDto dto, Long itemId) {
@@ -16,13 +24,37 @@ public class ItemMapper {
                 .build();
     }
 
-    public static ItemDto map(Item item) {
-        return ItemDto.builder()
+    public static ItemDto mapToDto(Item item) {
+        var builder = ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
-                .available(item.getAvailable())
-                .build();
+                .available(item.getAvailable());
+
+        var last = item.getLast();
+        if (last != null) {
+            builder.lastBooking(ShortBookingDto.builder()
+                    .id(last.getId())
+                    .bookerId(last.getBooker().getId())
+                    .build());
+        }
+
+        var next = item.getNext();
+        if (next != null) {
+            builder.nextBooking(ShortBookingDto.builder()
+                    .id(next.getId())
+                    .bookerId(next.getBooker().getId())
+                    .build());
+        }
+
+        List<Comment> comments = item.getComments();
+        if (comments != null && !comments.isEmpty()) {
+            builder.comments(comments.stream()
+                    .map(CommentMapper::mapToDto)
+                    .collect(Collectors.toList())
+            );
+        }
+        return builder.build();
     }
 
     public static Item map(ItemEntity entity) {
@@ -31,15 +63,16 @@ public class ItemMapper {
                 .name(entity.getName())
                 .description(entity.getDescription())
                 .available(entity.getAvailable())
+                .owner(UserMapper.map(entity.getUser()))
                 .build();
     }
 
-    public static ItemEntity map(Item model, Long itemId, Long userId) {
+    public static ItemEntity mapToEntity(Item model, Long itemId, UserEntity user) {
         return ItemEntity.builder()
                 .id(itemId)
                 .name(model.getName())
                 .description(model.getDescription())
-                .user(UserEntity.builder().id(userId).build())
+                .user(user)
                 .available(model.getAvailable())
                 .build();
     }

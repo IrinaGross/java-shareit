@@ -9,6 +9,9 @@ import ru.practicum.shareit.NotFoundException;
 import ru.practicum.shareit.item.db.ItemEntity;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.db.UserEntity;
+import ru.practicum.shareit.user.mapper.UserMapper;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -29,9 +32,10 @@ interface JpaItemRepository extends ItemRepository, CrudRepository<ItemEntity, L
 
     @NonNull
     @Override
-    default Item addNewItem(@NonNull Long userId, @NonNull Item item) {
+    default Item addNewItem(@NonNull User user, @NonNull Item item) {
+        UserEntity userEntity = UserMapper.mapToEntity(user, user.getId());
         return ItemMapper.map(
-                save(ItemMapper.map(item, null, userId))
+                save(ItemMapper.mapToEntity(item, null, userEntity))
         );
     }
 

@@ -1,11 +1,11 @@
 package ru.practicum.shareit.user.mapper;
 
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.db.UserEntity;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.Collections;
-
+@NoArgsConstructor
 public class UserMapper {
 
     public static User map(UserDto dto, Long userId) {
@@ -16,7 +16,7 @@ public class UserMapper {
                 .build();
     }
 
-    public static UserDto map(User user) {
+    public static UserDto mapToDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -24,12 +24,11 @@ public class UserMapper {
                 .build();
     }
 
-    public static UserEntity map(User model, Long userId) {
+    public static UserEntity mapToEntity(User model, Long userId) {
         return UserEntity.builder()
                 .id(userId)
                 .name(model.getName())
                 .email(model.getEmail())
-                .items(Collections.emptyList())
                 .build();
     }
 
@@ -46,7 +45,6 @@ public class UserMapper {
                 .id(entity.getId())
                 .name(model.getName() == null ? entity.getName() : model.getName())
                 .email(model.getEmail() == null ? entity.getEmail() : model.getEmail())
-                .items(Collections.emptyList())
                 .build();
     }
 }

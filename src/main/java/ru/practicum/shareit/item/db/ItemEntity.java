@@ -28,10 +28,10 @@ public class ItemEntity {
     @Column(name = "item_desc", nullable = false)
     private String description;
 
-    @Column(name = "item_is_available")
+    @Column(name = "item_is_available", nullable = false)
     private Boolean available;
 
     @ManyToOne
-    @JoinColumn(name = "item_owner_id", nullable = false, referencedColumnName = "user_id")
+    @JoinColumn(name = "item_owner_id", nullable = false)
     private UserEntity user;
 }

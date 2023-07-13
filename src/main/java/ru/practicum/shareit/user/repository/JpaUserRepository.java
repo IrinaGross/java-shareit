@@ -31,7 +31,7 @@ interface JpaUserRepository extends UserRepository, CrudRepository<UserEntity, L
     default User addUser(@NonNull User user) {
         try {
             return UserMapper.map(
-                    save(UserMapper.map(user, null))
+                    save(UserMapper.mapToEntity(user, null))
             );
         } catch (DataIntegrityViolationException e) {
             throw new ConflictException(String.format("Пользователь с email %1$s уже существует", user.getEmail()));
