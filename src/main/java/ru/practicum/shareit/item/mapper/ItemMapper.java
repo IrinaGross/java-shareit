@@ -48,7 +48,7 @@ public class ItemMapper {
         }
 
         List<Comment> comments = item.getComments();
-        if (comments != null && !comments.isEmpty()) {
+        if (comments != null) {
             builder.comments(comments.stream()
                     .map(CommentMapper::mapToDto)
                     .collect(Collectors.toList())
