@@ -14,12 +14,14 @@ import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingService;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.Const.X_SHARER_USER_ID_HEADER;
 import static ru.practicum.shareit.ExceptionMapper.getCustomBody;
+import static ru.practicum.shareit.Utils.X_SHARER_USER_ID_HEADER;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/bookings")
@@ -56,9 +58,11 @@ public class BookingController {
     @GetMapping
     public List<BookingDto> getAllRequests(
             @RequestHeader(X_SHARER_USER_ID_HEADER) long userId,
-            @RequestParam(name = "state", required = false) String state
+            @RequestParam(name = "state", required = false) String state,
+            @RequestParam(name = "from", required = false, defaultValue = "0") @Min(0) @NonNull Integer from,
+            @RequestParam(name = "size", required = false, defaultValue = "10") @Min(1) @NonNull Integer size
     ) {
-        return bookingService.getAllRequests(userId, asBookingState(state))
+        return bookingService.getAllRequests(userId, asBookingState(state), from, size)
                 .stream()
                 .map(BookingMapper::mapToDto)
                 .collect(Collectors.toList());
@@ -67,9 +71,11 @@ public class BookingController {
     @GetMapping("/owner")
     public List<BookingDto> getAllRequestsForOwner(
             @RequestHeader(X_SHARER_USER_ID_HEADER) long userId,
-            @RequestParam(name = "state", required = false) String state
+            @RequestParam(name = "state", required = false) String state,
+            @RequestParam(name = "from", required = false, defaultValue = "0") @Min(0) @NonNull Integer from,
+            @RequestParam(name = "size", required = false, defaultValue = "10") @Min(1) @NonNull Integer size
     ) {
-        return bookingService.getAllRequestsForOwner(userId, asBookingState(state))
+        return bookingService.getAllRequestsForOwner(userId, asBookingState(state), from, size)
                 .stream()
                 .map(BookingMapper::mapToDto)
                 .collect(Collectors.toList());
@@ -87,6 +93,7 @@ public class BookingController {
         }
     }
 
+    @SuppressWarnings("unused")
     @ExceptionHandler(UnsupportedStatusException.class)
     public ResponseEntity<Object> handleConflict(UnsupportedStatusException ex) {
         return new ResponseEntity<>(getCustomBody(ex), HttpStatus.BAD_REQUEST);

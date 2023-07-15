@@ -18,8 +18,8 @@ public interface BookingService {
     Booking getRequestById(@NonNull Long userId, @NonNull Long bookingId);
 
     @NonNull
-    List<Booking> getAllRequests(@NonNull Long userId, @NonNull BookingState state);
+    List<Booking> getAllRequests(@NonNull Long userId, @NonNull BookingState state, @NonNull Integer from, @NonNull Integer size);
 
     @NonNull
-    List<Booking> getAllRequestsForOwner(@NonNull Long userId, @NonNull BookingState state);
+    List<Booking> getAllRequestsForOwner(@NonNull Long userId, @NonNull BookingState state, @NonNull Integer from, @NonNull Integer size);
 }

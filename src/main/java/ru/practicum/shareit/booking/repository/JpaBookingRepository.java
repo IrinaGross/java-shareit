@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -13,6 +14,8 @@ import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.mapper.ItemRequestMapper;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
@@ -27,9 +30,10 @@ interface JpaBookingRepository extends BookingRepository, CrudRepository<Booking
 
     @NonNull
     @Override
-    default Booking create(@NonNull Booking model, @NonNull User user, @NonNull Item item) {
+    default Booking create(@NonNull Booking model, @NonNull User user, @NonNull Item item, @Nullable ItemRequest request) {
         var userEntity = UserMapper.mapToEntity(user, user.getId());
-        var itemEntity = ItemMapper.mapToEntity(item, item.getId(), userEntity);
+        var requestEntity = ItemRequestMapper.mapToEntity(request);
+        var itemEntity = ItemMapper.mapToEntity(item, item.getId(), userEntity, requestEntity);
         model = model.toBuilder().status(BookingStatus.WAITING).build();
         var bookingEntity = BookingMapper.mapToEntity(model, userEntity, itemEntity);
         return BookingMapper.map(save(bookingEntity));
@@ -56,26 +60,26 @@ interface JpaBookingRepository extends BookingRepository, CrudRepository<Booking
 
     @NonNull
     @Override
-    default List<Booking> findAllByUserId(@NonNull Long userId, @NonNull BookingState state) {
+    default List<Booking> findAllByUserId(@NonNull Long userId, @NonNull BookingState state, @NonNull Pageable pageable) {
         Collection<BookingEntity> collection;
         switch (state) {
             case CURRENT:
-                collection = findAllByUserIdAndStartBeforeAndEndAfterOrderByStartAsc(userId, LocalDateTime.now(), LocalDateTime.now());
+                collection = findAllByUserIdAndStartBeforeAndEndAfterOrderByStartAsc(userId, LocalDateTime.now(), LocalDateTime.now(), pageable);
                 break;
             case PAST:
-                collection = findAllByUserIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
+                collection = findAllByUserIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now(), pageable);
                 break;
             case FUTURE:
-                collection = findAllByUserIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
+                collection = findAllByUserIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now(), pageable);
                 break;
             case WAITING:
-                collection = findAllByUserIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING.toString());
+                collection = findAllByUserIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING.toString(), pageable);
                 break;
             case REJECTED:
-                collection = findAllByUserIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED.toString());
+                collection = findAllByUserIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED.toString(), pageable);
                 break;
             default:
-                collection = findAllByUserIdOrderByStartDesc(userId);
+                collection = findAllByUserIdOrderByStartDesc(userId, pageable);
                 break;
         }
         return collection.stream()
@@ -85,26 +89,26 @@ interface JpaBookingRepository extends BookingRepository, CrudRepository<Booking
 
     @NonNull
     @Override
-    default List<Booking> findAllByItemUserId(@NonNull Long userId, @NonNull BookingState state) {
+    default List<Booking> findAllByItemUserId(@NonNull Long userId, @NonNull BookingState state, @NonNull Pageable pageable) {
         Collection<BookingEntity> collection;
         switch (state) {
             case CURRENT:
-                collection = findAllByItemUserIdAndStartBeforeAndEndAfterOrderByStartDesc(userId, LocalDateTime.now(), LocalDateTime.now());
+                collection = findAllByItemUserIdAndStartBeforeAndEndAfterOrderByStartDesc(userId, LocalDateTime.now(), LocalDateTime.now(), pageable);
                 break;
             case PAST:
-                collection = findAllByItemUserIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
+                collection = findAllByItemUserIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now(), pageable);
                 break;
             case FUTURE:
-                collection = findAllByItemUserIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
+                collection = findAllByItemUserIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now(), pageable);
                 break;
             case WAITING:
-                collection = findAllByItemUserIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING.toString());
+                collection = findAllByItemUserIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING.toString(), pageable);
                 break;
             case REJECTED:
-                collection = findAllByItemUserIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED.toString());
+                collection = findAllByItemUserIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED.toString(), pageable);
                 break;
             default:
-                collection = findAllByItemUserIdOrderByStartDesc(userId);
+                collection = findAllByItemUserIdOrderByStartDesc(userId, pageable);
                 break;
         }
 
@@ -142,23 +146,23 @@ interface JpaBookingRepository extends BookingRepository, CrudRepository<Booking
 
     Optional<BookingEntity> findFirstByItemIdAndUserIdAndStatusAndEndBefore(Long itemId, Long userId, String status, LocalDateTime date);
 
-    Collection<BookingEntity> findAllByItemUserIdOrderByStartDesc(Long userId);
+    List<BookingEntity> findAllByItemUserIdOrderByStartDesc(Long userId, Pageable pageable);
 
-    Collection<BookingEntity> findAllByItemUserIdAndStatusOrderByStartDesc(Long userId, String status);
+    List<BookingEntity> findAllByItemUserIdAndStatusOrderByStartDesc(Long userId, String status, Pageable pageable);
 
-    Collection<BookingEntity> findAllByItemUserIdAndStartAfterOrderByStartDesc(Long userId, LocalDateTime date);
+    List<BookingEntity> findAllByItemUserIdAndStartAfterOrderByStartDesc(Long userId, LocalDateTime date, Pageable pageable);
 
-    Collection<BookingEntity> findAllByItemUserIdAndEndBeforeOrderByStartDesc(Long userId, LocalDateTime date);
+    List<BookingEntity> findAllByItemUserIdAndEndBeforeOrderByStartDesc(Long userId, LocalDateTime date, Pageable pageable);
 
-    Collection<BookingEntity> findAllByItemUserIdAndStartBeforeAndEndAfterOrderByStartDesc(Long userId, LocalDateTime start, LocalDateTime end);
+    List<BookingEntity> findAllByItemUserIdAndStartBeforeAndEndAfterOrderByStartDesc(Long userId, LocalDateTime start, LocalDateTime end, Pageable pageable);
 
-    Collection<BookingEntity> findAllByUserIdOrderByStartDesc(Long userId);
+    List<BookingEntity> findAllByUserIdOrderByStartDesc(Long userId, Pageable pageable);
 
-    Collection<BookingEntity> findAllByUserIdAndStartAfterOrderByStartDesc(Long userId, LocalDateTime date);
+    List<BookingEntity> findAllByUserIdAndStartAfterOrderByStartDesc(Long userId, LocalDateTime date, Pageable pageable);
 
-    Collection<BookingEntity> findAllByUserIdAndStartBeforeAndEndAfterOrderByStartAsc(Long userId, LocalDateTime start, LocalDateTime end);
+    List<BookingEntity> findAllByUserIdAndStartBeforeAndEndAfterOrderByStartAsc(Long userId, LocalDateTime start, LocalDateTime end, Pageable pageable);
 
-    Collection<BookingEntity> findAllByUserIdAndStatusOrderByStartDesc(Long userId, String status);
+    List<BookingEntity> findAllByUserIdAndStatusOrderByStartDesc(Long userId, String status, Pageable pageable);
 
-    Collection<BookingEntity> findAllByUserIdAndEndBeforeOrderByStartDesc(Long userId, LocalDateTime date);
+    List<BookingEntity> findAllByUserIdAndEndBeforeOrderByStartDesc(Long userId, LocalDateTime date, Pageable pageable);
 }

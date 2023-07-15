@@ -12,11 +12,13 @@ import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.Const.X_SHARER_USER_ID_HEADER;
+import static ru.practicum.shareit.Utils.X_SHARER_USER_ID_HEADER;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/items")
@@ -24,8 +26,12 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public List<ItemDto> getItems(@RequestHeader(X_SHARER_USER_ID_HEADER) long userId) {
-        return itemService.getItems(userId)
+    public List<ItemDto> getItems(
+            @RequestHeader(X_SHARER_USER_ID_HEADER) long userId,
+            @RequestParam(name = "from", required = false, defaultValue = "0") @Min(0) @NonNull Integer from,
+            @RequestParam(name = "size", required = false, defaultValue = "10") @Min(1) @NonNull Integer size
+    ) {
+        return itemService.getItems(userId, from, size)
                 .stream()
                 .map(ItemMapper::mapToDto)
                 .collect(Collectors.toList());
@@ -40,8 +46,12 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItems(@RequestParam(value = "text") String text) {
-        return itemService.searchBy(text)
+    public List<ItemDto> searchItems(
+            @RequestParam(value = "text") String text,
+            @RequestParam(name = "from", required = false, defaultValue = "0") @Min(0) @NonNull Integer from,
+            @RequestParam(name = "size", required = false, defaultValue = "10") @Min(1) @NonNull Integer size
+    ) {
+        return itemService.searchBy(text, from, size)
                 .stream()
                 .map(ItemMapper::mapToDto)
                 .collect(Collectors.toList());

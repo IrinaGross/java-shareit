@@ -9,7 +9,7 @@ import java.util.List;
 public interface ItemService {
 
     @NonNull
-    List<Item> getItems(@NonNull Long userId);
+    List<Item> getItems(@NonNull Long userId, @NonNull Integer from, @NonNull Integer size);
 
     @NonNull
     Item addNewItem(@NonNull Long userId, @NonNull Item item);
@@ -23,7 +23,7 @@ public interface ItemService {
     Item getItem(@NonNull Long userId, @NonNull Long itemId);
 
     @NonNull
-    List<Item> searchBy(@NonNull String text);
+    List<Item> searchBy(@NonNull String text, @NonNull Integer from, @NonNull Integer size);
 
     @NonNull
     Comment createComment(@NonNull Long userId, @NonNull Long itemId, @NonNull Comment comment);

@@ -2,13 +2,17 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.BadRequestException;
+import ru.practicum.shareit.Utils;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -22,12 +26,13 @@ class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @NonNull
     @Override
-    public List<Item> getItems(@NonNull Long userId) {
+    public List<Item> getItems(@NonNull Long userId, @NonNull Integer from, @NonNull Integer size) {
         User user = userRepository.getById(userId);
-        return itemRepository.getItems(user.getId())
+        return itemRepository.getItems(user.getId(), Utils.newPage(from, size))
                 .stream()
                 .map(it -> inflateMore(it, true))
                 .collect(Collectors.toList());
@@ -36,8 +41,9 @@ class ItemServiceImpl implements ItemService {
     @NonNull
     @Override
     public Item addNewItem(@NonNull Long userId, @NonNull Item item) {
-        User user = userRepository.getById(userId);
-        return itemRepository.addNewItem(user, item);
+        var user = userRepository.getById(userId);
+        var request = getItemRequest(item);
+        return itemRepository.addNewItem(user, item, request);
     }
 
     @Override
@@ -63,8 +69,8 @@ class ItemServiceImpl implements ItemService {
 
     @NonNull
     @Override
-    public List<Item> searchBy(@NonNull String text) {
-        return itemRepository.searchBy(text);
+    public List<Item> searchBy(@NonNull String text, @NonNull Integer from, @NonNull Integer size) {
+        return itemRepository.searchBy(text, Utils.newPage(from, size));
     }
 
     @NonNull
@@ -76,7 +82,8 @@ class ItemServiceImpl implements ItemService {
         }
         var item = itemRepository.getItem(itemId);
         var user = userRepository.getById(userId);
-        return commentRepository.create(item, user, comment);
+        var request = getItemRequest(item);
+        return commentRepository.create(item, user, comment, request);
     }
 
     private Item inflateMore(Item item, boolean loadLastAndNext) {
@@ -87,5 +94,15 @@ class ItemServiceImpl implements ItemService {
                     .next(bookingRepository.findNextApproved(item.getId()));
         }
         return builder.build();
+    }
+
+    @Nullable
+    private ItemRequest getItemRequest(Item item) {
+        ItemRequest request = null;
+        var requestId = item.getRequestId();
+        if (requestId != null) {
+            request = itemRequestRepository.getById(requestId);
+        }
+        return request;
     }
 }

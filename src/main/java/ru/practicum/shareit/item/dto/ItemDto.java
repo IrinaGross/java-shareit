@@ -7,6 +7,7 @@ import lombok.extern.jackson.Jacksonized;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @Data
@@ -31,4 +32,8 @@ public class ItemDto {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final List<CommentDto> comments;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Positive(groups = {CreateItemGroup.class})
+    private final Long requestId;
 }
