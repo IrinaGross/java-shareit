@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.BadRequestException;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.Utils;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.model.Comment;

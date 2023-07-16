@@ -12,7 +12,7 @@ import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.Utils.X_SHARER_USER_ID_HEADER;
+import static ru.practicum.shareit.Utils.*;
 
 @Validated
 @RestController
@@ -52,8 +52,8 @@ public class ItemRequestController {
     @GetMapping("/all")
     public List<ItemRequestDto> getAll(
             @RequestHeader(X_SHARER_USER_ID_HEADER) @NonNull Long userId,
-            @RequestParam(name = "from", required = false, defaultValue = "0") @Min(0) @NonNull Integer from,
-            @RequestParam(name = "size", required = false, defaultValue = "10") @Min(1) @NonNull Integer size
+            @RequestParam(name = FROM_REQUEST_PARAM, required = false, defaultValue = DEFAULT_FROM_VALUE) @Min(0) @NonNull Integer from,
+            @RequestParam(name = SIZE_REQUEST_PARAM, required = false, defaultValue = DEFAULT_SIZE_VALUE) @Min(1) @NonNull Integer size
     ) {
         return service.getAll(userId, from, size)
                 .stream()

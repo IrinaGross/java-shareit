@@ -17,6 +17,7 @@ public class ItemRequestMapper {
     @NonNull
     public static ItemRequest map(@NonNull ItemRequestDto dto) {
         return ItemRequest.builder()
+                .id(dto.getId())
                 .description(dto.getDescription())
                 .build();
     }

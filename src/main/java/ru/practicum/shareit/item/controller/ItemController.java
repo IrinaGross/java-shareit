@@ -16,7 +16,7 @@ import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.Utils.X_SHARER_USER_ID_HEADER;
+import static ru.practicum.shareit.Utils.*;
 
 @Validated
 @RestController
@@ -28,8 +28,8 @@ public class ItemController {
     @GetMapping
     public List<ItemDto> getItems(
             @RequestHeader(X_SHARER_USER_ID_HEADER) long userId,
-            @RequestParam(name = "from", required = false, defaultValue = "0") @Min(0) @NonNull Integer from,
-            @RequestParam(name = "size", required = false, defaultValue = "10") @Min(1) @NonNull Integer size
+            @RequestParam(name = FROM_REQUEST_PARAM, required = false, defaultValue = "0") @Min(0) @NonNull Integer from,
+            @RequestParam(name = SIZE_REQUEST_PARAM, required = false, defaultValue = "10") @Min(1) @NonNull Integer size
     ) {
         return itemService.getItems(userId, from, size)
                 .stream()
@@ -47,9 +47,9 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> searchItems(
-            @RequestParam(value = "text") String text,
-            @RequestParam(name = "from", required = false, defaultValue = "0") @Min(0) @NonNull Integer from,
-            @RequestParam(name = "size", required = false, defaultValue = "10") @Min(1) @NonNull Integer size
+            @RequestParam(name = SEARCH_REQUEST_PARAM) String text,
+            @RequestParam(name = FROM_REQUEST_PARAM, required = false, defaultValue = "0") @Min(0) @NonNull Integer from,
+            @RequestParam(name = SIZE_REQUEST_PARAM, required = false, defaultValue = "10") @Min(1) @NonNull Integer size
     ) {
         return itemService.searchBy(text, from, size)
                 .stream()
