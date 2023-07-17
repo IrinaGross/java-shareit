@@ -44,11 +44,11 @@ class ItemControllerTest {
     @Test
     @SneakyThrows
     void getItemsWithCorrectRequestShouldReturnIsOkWithResponse() {
-        when(service.getItems(USER_ID, FROM, SIZE))
+        when(service.getItems(USER_ID_1, FROM, SIZE))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/items")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .param(FROM_REQUEST_PARAM, Integer.toString(FROM))
                         .param(SIZE_REQUEST_PARAM, Integer.toString(SIZE)))
                 .andExpect(status().isOk())
@@ -56,7 +56,7 @@ class ItemControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getItems(USER_ID, FROM, SIZE);
+                .getItems(USER_ID_1, FROM, SIZE);
     }
 
     @Test
@@ -65,17 +65,17 @@ class ItemControllerTest {
         var expectedFrom = FROM;
         var expectedSize = SIZE;
 
-        when(service.getItems(USER_ID, expectedFrom, expectedSize))
+        when(service.getItems(USER_ID_1, expectedFrom, expectedSize))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/items")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID))
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getItems(USER_ID, expectedFrom, expectedSize);
+                .getItems(USER_ID_1, expectedFrom, expectedSize);
     }
 
     @Test
@@ -84,17 +84,17 @@ class ItemControllerTest {
         var expectedFrom = FROM;
         var expectedSize = SIZE;
 
-        when(service.getItems(USER_ID, expectedFrom, expectedSize))
+        when(service.getItems(USER_ID_1, expectedFrom, expectedSize))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/items")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID))
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getItems(USER_ID, expectedFrom, expectedSize);
+                .getItems(USER_ID_1, expectedFrom, expectedSize);
     }
 
     @Test
@@ -103,7 +103,7 @@ class ItemControllerTest {
         var wrongFrom = -1;
 
         mockMvc.perform(get("/items")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .param(FROM_REQUEST_PARAM, Integer.toString(wrongFrom))
                         .param(SIZE_REQUEST_PARAM, Integer.toString(SIZE)))
                 .andExpect(status().isBadRequest());
@@ -118,7 +118,7 @@ class ItemControllerTest {
         var wrongSize = 0;
 
         mockMvc.perform(get("/items")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .param(FROM_REQUEST_PARAM, Integer.toString(FROM))
                         .param(SIZE_REQUEST_PARAM, Integer.toString(wrongSize)))
                 .andExpect(status().isBadRequest());
@@ -130,7 +130,7 @@ class ItemControllerTest {
     @Test
     @SneakyThrows
     void getItemsWithWrongUserIdShouldReturnNotFound() {
-        var wrongUserId = USER_ID + 1;
+        var wrongUserId = USER_ID_1 + 1;
 
         when(service.getItems(wrongUserId, FROM, SIZE))
                 .thenThrow(NotFoundException.class);
@@ -161,58 +161,58 @@ class ItemControllerTest {
     @SneakyThrows
     void getItemWithCorrectRequestShouldReturnIsOkWithResponse() {
         var response = ItemDto.builder()
-                .id(ITEM_ID)
+                .id(ITEM_ID_1)
                 .build();
 
-        when(service.getItem(USER_ID, ITEM_ID))
+        when(service.getItem(USER_ID_1, ITEM_ID_1))
                 .thenReturn(map(response, response.getId()));
 
-        mockMvc.perform(get("/items/{itemId}", ITEM_ID)
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID))
+        mockMvc.perform(get("/items/{itemId}", ITEM_ID_1)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
 
         verify(service, times(1))
-                .getItem(USER_ID, ITEM_ID);
+                .getItem(USER_ID_1, ITEM_ID_1);
     }
 
     @Test
     @SneakyThrows
     void getItemWithWrongItemIdShouldReturnNotFound() {
-        Long wrongItemId = ITEM_ID + 1;
+        Long wrongItemId = ITEM_ID_1 + 1;
 
-        when(service.getItem(USER_ID, wrongItemId))
+        when(service.getItem(USER_ID_1, wrongItemId))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(get("/items/{itemId}", wrongItemId)
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID))
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1))
                 .andExpect(status().isNotFound());
 
         verify(service, times(1))
-                .getItem(USER_ID, wrongItemId);
+                .getItem(USER_ID_1, wrongItemId);
     }
 
     @Test
     @SneakyThrows
     void getItemWithWrongUserIdShouldReturnNotFound() {
-        Long wrongUserId = USER_ID + 1;
+        Long wrongUserId = USER_ID_1 + 1;
 
-        when(service.getItem(wrongUserId, ITEM_ID))
+        when(service.getItem(wrongUserId, ITEM_ID_1))
                 .thenThrow(NotFoundException.class);
 
-        mockMvc.perform(get("/items/{itemId}", ITEM_ID)
+        mockMvc.perform(get("/items/{itemId}", ITEM_ID_1)
                         .header(X_SHARER_USER_ID_HEADER, wrongUserId))
                 .andExpect(status().isNotFound());
 
         verify(service, times(1))
-                .getItem(wrongUserId, ITEM_ID);
+                .getItem(wrongUserId, ITEM_ID_1);
     }
 
     @Test
     @SneakyThrows
     void getItemWithoutUserIdShouldReturnBadRequest() {
-        mockMvc.perform(get("/items/{itemId}", ITEM_ID))
+        mockMvc.perform(get("/items/{itemId}", ITEM_ID_1))
                 .andExpect(status().isBadRequest());
 
         verify(service, never())
@@ -335,17 +335,17 @@ class ItemControllerTest {
                 .available(ITEM_AVAILABLE)
                 .build();
         var response = ItemDto.builder()
-                .id(ITEM_ID)
+                .id(ITEM_ID_1)
                 .name(ITEM_NAME)
                 .description(ITEM_DESC)
                 .available(ITEM_AVAILABLE)
                 .build();
 
-        when(service.addNewItem(USER_ID, map(request, request.getId())))
+        when(service.addNewItem(USER_ID_1, map(request, request.getId())))
                 .thenReturn(map(response, response.getId()));
 
         mockMvc.perform(post("/items")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -353,7 +353,7 @@ class ItemControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
 
         verify(service, times(1))
-                .addNewItem(USER_ID, map(request, request.getId()));
+                .addNewItem(USER_ID_1, map(request, request.getId()));
     }
 
     @Test
@@ -365,7 +365,7 @@ class ItemControllerTest {
                 .build();
 
         mockMvc.perform(post("/items")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -384,7 +384,7 @@ class ItemControllerTest {
                 .build();
 
         mockMvc.perform(post("/items")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -402,7 +402,7 @@ class ItemControllerTest {
                 .build();
 
         mockMvc.perform(post("/items")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -421,7 +421,7 @@ class ItemControllerTest {
                 .build();
 
         mockMvc.perform(post("/items")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -439,7 +439,7 @@ class ItemControllerTest {
                 .build();
 
         mockMvc.perform(post("/items")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -451,7 +451,7 @@ class ItemControllerTest {
     @Test
     @SneakyThrows
     void addItemWithWrongUserIdShouldReturnBadRequest() {
-        Long wrongUserId = USER_ID;
+        Long wrongUserId = USER_ID_1;
         var request = ItemDto.builder()
                 .name(ITEM_NAME)
                 .description(ITEM_DESC)
@@ -496,17 +496,17 @@ class ItemControllerTest {
                 .description(ITEM_NEW_DESC)
                 .build();
         var response = ItemDto.builder()
-                .id(ITEM_ID)
+                .id(ITEM_ID_1)
                 .name(ITEM_NAME)
                 .description(ITEM_NEW_DESC)
                 .available(ITEM_AVAILABLE)
                 .build();
 
-        when(service.updateItem(USER_ID, map(request, ITEM_ID)))
+        when(service.updateItem(USER_ID_1, map(request, ITEM_ID_1)))
                 .thenReturn(map(response, response.getId()));
 
-        mockMvc.perform(patch("/items/{itemId}", ITEM_ID)
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+        mockMvc.perform(patch("/items/{itemId}", ITEM_ID_1)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -514,49 +514,49 @@ class ItemControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
 
         verify(service, times(1))
-                .updateItem(USER_ID, map(request, ITEM_ID));
+                .updateItem(USER_ID_1, map(request, ITEM_ID_1));
     }
 
     @Test
     @SneakyThrows
     void updateItemWithWrongItemIdShouldReturnNotFound() {
-        var wrongItemId = ITEM_ID + 1;
+        var wrongItemId = ITEM_ID_1 + 1;
         var request = ItemDto.builder()
                 .description(ITEM_NEW_DESC)
                 .build();
 
-        when(service.updateItem(USER_ID, map(request, wrongItemId)))
+        when(service.updateItem(USER_ID_1, map(request, wrongItemId)))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(patch("/items/{itemId}", wrongItemId)
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound());
 
         verify(service, times(1))
-                .updateItem(USER_ID, map(request, wrongItemId));
+                .updateItem(USER_ID_1, map(request, wrongItemId));
     }
 
     @Test
     @SneakyThrows
     void updateItemWithWrongUserIdShouldReturnNotFound() {
-        var wrongUserId = USER_ID + 1;
+        var wrongUserId = USER_ID_1 + 1;
         var request = ItemDto.builder()
                 .description(ITEM_NEW_DESC)
                 .build();
 
-        when(service.updateItem(wrongUserId, map(request, ITEM_ID)))
+        when(service.updateItem(wrongUserId, map(request, ITEM_ID_1)))
                 .thenThrow(NotFoundException.class);
 
-        mockMvc.perform(patch("/items/{itemId}", ITEM_ID)
+        mockMvc.perform(patch("/items/{itemId}", ITEM_ID_1)
                         .header(X_SHARER_USER_ID_HEADER, wrongUserId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound());
 
         verify(service, times(1))
-                .updateItem(wrongUserId, map(request, ITEM_ID));
+                .updateItem(wrongUserId, map(request, ITEM_ID_1));
     }
 
     @Test
@@ -566,7 +566,7 @@ class ItemControllerTest {
                 .description(ITEM_NEW_DESC)
                 .build();
 
-        mockMvc.perform(patch("/items/{itemId}", ITEM_ID)
+        mockMvc.perform(patch("/items/{itemId}", ITEM_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -578,50 +578,50 @@ class ItemControllerTest {
     @Test
     @SneakyThrows
     void deleteItemWithCorrectRequestShouldReturnIsOk() {
-        mockMvc.perform(delete("/items/{itemId}", ITEM_ID)
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID))
+        mockMvc.perform(delete("/items/{itemId}", ITEM_ID_1)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1))
                 .andExpect(status().isOk());
 
         verify(service, times(1))
-                .deleteItem(USER_ID, ITEM_ID);
+                .deleteItem(USER_ID_1, ITEM_ID_1);
     }
 
     @Test
     @SneakyThrows
     void deleteItemWithWrongItemIdShouldReturnNotFound() {
-        var wrongItemId = ITEM_ID + 1;
+        var wrongItemId = ITEM_ID_1 + 1;
 
         doThrow(NotFoundException.class)
-                .when(service).deleteItem(USER_ID, wrongItemId);
+                .when(service).deleteItem(USER_ID_1, wrongItemId);
 
         mockMvc.perform(delete("/items/{itemId}", wrongItemId)
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID))
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1))
                 .andExpect(status().isNotFound());
 
         verify(service, times(1))
-                .deleteItem(USER_ID, wrongItemId);
+                .deleteItem(USER_ID_1, wrongItemId);
     }
 
     @Test
     @SneakyThrows
     void deleteItemWithWrongUserIdShouldReturnNotFound() {
-        var wrongUserId = USER_ID + 1;
+        var wrongUserId = USER_ID_1 + 1;
 
         doThrow(NotFoundException.class)
-                .when(service).deleteItem(wrongUserId, ITEM_ID);
+                .when(service).deleteItem(wrongUserId, ITEM_ID_1);
 
-        mockMvc.perform(delete("/items/{itemId}", ITEM_ID)
+        mockMvc.perform(delete("/items/{itemId}", ITEM_ID_1)
                         .header(X_SHARER_USER_ID_HEADER, wrongUserId))
                 .andExpect(status().isNotFound());
 
         verify(service, times(1))
-                .deleteItem(wrongUserId, ITEM_ID);
+                .deleteItem(wrongUserId, ITEM_ID_1);
     }
 
     @Test
     @SneakyThrows
     void deleteItemWithoutUserIdShouldReturnBadRequest() {
-        mockMvc.perform(delete("/items/{itemId}", ITEM_ID))
+        mockMvc.perform(delete("/items/{itemId}", ITEM_ID_1))
                 .andExpect(status().isBadRequest());
 
         verify(service, never())
@@ -640,11 +640,11 @@ class ItemControllerTest {
                 .created(REQUEST_TIME)
                 .build();
 
-        when(service.createComment(USER_ID, ITEM_ID, map(request)))
+        when(service.createComment(USER_ID_1, ITEM_ID_1, map(request)))
                 .thenReturn(map(response));
 
-        mockMvc.perform(post("/items/{itemId}/comment", ITEM_ID)
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+        mockMvc.perform(post("/items/{itemId}/comment", ITEM_ID_1)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -652,49 +652,49 @@ class ItemControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
 
         verify(service, times(1))
-                .createComment(USER_ID, ITEM_ID, map(request));
+                .createComment(USER_ID_1, ITEM_ID_1, map(request));
     }
 
     @Test
     @SneakyThrows
     void createCommentWithWrongItemIdShouldReturnNotFound() {
-        Long wrongItemId = ITEM_ID + 1;
+        Long wrongItemId = ITEM_ID_1 + 1;
         var request = CommentDto.builder()
                 .text(COMMENT_TEXT)
                 .build();
 
-        when(service.createComment(USER_ID, wrongItemId, map(request)))
+        when(service.createComment(USER_ID_1, wrongItemId, map(request)))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(post("/items/{itemId}/comment", wrongItemId)
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound());
 
         verify(service, times(1))
-                .createComment(USER_ID, wrongItemId, map(request));
+                .createComment(USER_ID_1, wrongItemId, map(request));
     }
 
     @Test
     @SneakyThrows
     void createCommentWithWrongUserIdShouldReturnNotFound() {
-        var wrongUserId = USER_ID + 1;
+        var wrongUserId = USER_ID_1 + 1;
         var request = CommentDto.builder()
                 .text(COMMENT_TEXT)
                 .build();
 
-        when(service.createComment(wrongUserId, ITEM_ID, map(request)))
+        when(service.createComment(wrongUserId, ITEM_ID_1, map(request)))
                 .thenThrow(NotFoundException.class);
 
-        mockMvc.perform(post("/items/{itemId}/comment", ITEM_ID)
+        mockMvc.perform(post("/items/{itemId}/comment", ITEM_ID_1)
                         .header(X_SHARER_USER_ID_HEADER, wrongUserId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound());
 
         verify(service, times(1))
-                .createComment(wrongUserId, ITEM_ID, map(request));
+                .createComment(wrongUserId, ITEM_ID_1, map(request));
     }
 
     @Test
@@ -704,7 +704,7 @@ class ItemControllerTest {
                 .text(COMMENT_TEXT)
                 .build();
 
-        mockMvc.perform(post("/items/{itemId}/comment", ITEM_ID)
+        mockMvc.perform(post("/items/{itemId}/comment", ITEM_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());

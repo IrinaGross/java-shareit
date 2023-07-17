@@ -41,7 +41,7 @@ class BookingControllerTest {
     @SneakyThrows
     void addRequestWithCorrectRequestShouldReturnIsOkWithResponse() {
         var request = BookingDto.builder()
-                .itemId(ITEM_ID)
+                .itemId(ITEM_ID_1)
                 .start(REQUEST_TIME.plusDays(1L))
                 .end(REQUEST_TIME.plusDays(2L))
                 .build();
@@ -51,11 +51,11 @@ class BookingControllerTest {
                 .end(REQUEST_TIME.plusDays(2L))
                 .build();
 
-        when(service.newRequest(USER_ID, ITEM_ID, map(request)))
+        when(service.newRequest(USER_ID_1, ITEM_ID_1, map(request)))
                 .thenReturn(map(response));
 
         mockMvc.perform(post("/bookings")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -63,7 +63,7 @@ class BookingControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
 
         verify(service, times(1))
-                .newRequest(USER_ID, ITEM_ID, map(request));
+                .newRequest(USER_ID_1, ITEM_ID_1, map(request));
     }
 
     @Test
@@ -76,7 +76,7 @@ class BookingControllerTest {
                 .build();
 
         mockMvc.perform(post("/bookings")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -88,37 +88,37 @@ class BookingControllerTest {
     @Test
     @SneakyThrows
     void addRequestWithWrongItemIdShouldReturnNotFound() {
-        var wrongItemId = ITEM_ID + 1;
+        var wrongItemId = ITEM_ID_1 + 1;
         var request = BookingDto.builder()
                 .itemId(wrongItemId)
                 .start(REQUEST_TIME.plusDays(1))
                 .end(REQUEST_TIME.plusDays(2))
                 .build();
 
-        when(service.newRequest(USER_ID, wrongItemId, map(request)))
+        when(service.newRequest(USER_ID_1, wrongItemId, map(request)))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(post("/bookings")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound());
 
         verify(service, times(1))
-                .newRequest(USER_ID, wrongItemId, map(request));
+                .newRequest(USER_ID_1, wrongItemId, map(request));
     }
 
     @Test
     @SneakyThrows
     void addRequestWithStartIsNullShouldReturnBadRequest() {
         var request = BookingDto.builder()
-                .itemId(ITEM_ID)
+                .itemId(ITEM_ID_1)
                 .start(null)
                 .end(REQUEST_TIME.plusDays(2L))
                 .build();
 
         mockMvc.perform(post("/bookings")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -131,13 +131,13 @@ class BookingControllerTest {
     @SneakyThrows
     void addRequestWithStartEqualEndShouldReturnBadRequest() {
         var request = BookingDto.builder()
-                .itemId(ITEM_ID)
+                .itemId(ITEM_ID_1)
                 .start(REQUEST_TIME)
                 .end(REQUEST_TIME)
                 .build();
 
         mockMvc.perform(post("/bookings")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -150,79 +150,79 @@ class BookingControllerTest {
     @SneakyThrows
     void addRequestWithEndBeforeStartShouldReturnBadRequest() {
         var request = BookingDto.builder()
-                .itemId(ITEM_ID)
+                .itemId(ITEM_ID_1)
                 .start(REQUEST_TIME.plusDays(2))
                 .end(REQUEST_TIME.plusDays(1))
                 .build();
 
-        when(service.newRequest(USER_ID, ITEM_ID, map(request)))
+        when(service.newRequest(USER_ID_1, ITEM_ID_1, map(request)))
                 .thenThrow(BadRequestException.class);
 
         mockMvc.perform(post("/bookings")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
 
         verify(service, times(1))
-                .newRequest(USER_ID, ITEM_ID, map(request));
+                .newRequest(USER_ID_1, ITEM_ID_1, map(request));
     }
 
     @Test
     @SneakyThrows
     void addRequestWithEndIsPastShouldReturnBadRequest() {
         var request = BookingDto.builder()
-                .itemId(ITEM_ID)
+                .itemId(ITEM_ID_1)
                 .start(REQUEST_TIME.plusDays(1))
                 .end(REQUEST_TIME.plusDays(1))
                 .build();
 
-        when(service.newRequest(USER_ID, ITEM_ID, map(request)))
+        when(service.newRequest(USER_ID_1, ITEM_ID_1, map(request)))
                 .thenThrow(BadRequestException.class);
 
         mockMvc.perform(post("/bookings")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
 
         verify(service, times(1))
-                .newRequest(USER_ID, ITEM_ID, map(request));
+                .newRequest(USER_ID_1, ITEM_ID_1, map(request));
     }
 
     @Test
     @SneakyThrows
     void addRequestWithStartIsPastShouldReturnBadRequest() {
         var request = BookingDto.builder()
-                .itemId(ITEM_ID)
+                .itemId(ITEM_ID_1)
                 .start(REQUEST_TIME.plusDays(1))
                 .end(REQUEST_TIME.plusDays(1))
                 .build();
 
-        when(service.newRequest(USER_ID, ITEM_ID, map(request)))
+        when(service.newRequest(USER_ID_1, ITEM_ID_1, map(request)))
                 .thenThrow(BadRequestException.class);
 
         mockMvc.perform(post("/bookings")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
 
         verify(service, times(1))
-                .newRequest(USER_ID, ITEM_ID, map(request));
+                .newRequest(USER_ID_1, ITEM_ID_1, map(request));
     }
 
     @Test
     @SneakyThrows
     void addRequestWithWrongUserIdShouldReturnNotFound() {
-        var wrongUserId = USER_ID + 1;
+        var wrongUserId = USER_ID_1 + 1;
         var request = BookingDto.builder()
-                .itemId(ITEM_ID)
+                .itemId(ITEM_ID_1)
                 .start(REQUEST_TIME.plusDays(1))
                 .end(REQUEST_TIME.plusDays(2))
                 .build();
 
-        when(service.newRequest(wrongUserId, ITEM_ID, map(request)))
+        when(service.newRequest(wrongUserId, ITEM_ID_1, map(request)))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(post("/bookings")
@@ -232,14 +232,14 @@ class BookingControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(service, times(1))
-                .newRequest(wrongUserId, ITEM_ID, map(request));
+                .newRequest(wrongUserId, ITEM_ID_1, map(request));
     }
 
     @Test
     @SneakyThrows
     void addRequestWithoutUserIdShouldReturnBadRequest() {
         var request = BookingDto.builder()
-                .itemId(ITEM_ID)
+                .itemId(ITEM_ID_1)
                 .start(REQUEST_TIME.plusDays(1))
                 .end(REQUEST_TIME.plusDays(2))
                 .build();
@@ -261,18 +261,18 @@ class BookingControllerTest {
                 .status(BOOKING_STATUS)
                 .build();
 
-        when(service.changeRequestStatus(USER_ID, BOOKING_ID, BOOKING_STATUS))
+        when(service.changeRequestStatus(USER_ID_1, BOOKING_ID, BOOKING_STATUS))
                 .thenReturn(map(response));
 
         mockMvc.perform(patch("/bookings/{bookingId}", BOOKING_ID)
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .param("approved", "true"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
 
         verify(service, times(1))
-                .changeRequestStatus(USER_ID, BOOKING_ID, BOOKING_STATUS);
+                .changeRequestStatus(USER_ID_1, BOOKING_ID, BOOKING_STATUS);
     }
 
     @Test
@@ -280,37 +280,37 @@ class BookingControllerTest {
     void changeStatusWithWrongBookingIdShouldReturnNotFound() {
         long wrongBookingId = BOOKING_ID + 1;
 
-        when(service.changeRequestStatus(USER_ID, wrongBookingId, BOOKING_STATUS))
+        when(service.changeRequestStatus(USER_ID_1, wrongBookingId, BOOKING_STATUS))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(patch("/bookings/{bookingId}", wrongBookingId)
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .param("approved", "true"))
                 .andExpect(status().isNotFound());
 
         verify(service, times(1))
-                .changeRequestStatus(USER_ID, wrongBookingId, BOOKING_STATUS);
+                .changeRequestStatus(USER_ID_1, wrongBookingId, BOOKING_STATUS);
     }
 
     @Test
     @SneakyThrows
     void changeStatusWithAlreadyApprovedStatusShouldReturnBadRequest() {
-        when(service.changeRequestStatus(USER_ID, BOOKING_ID, BOOKING_STATUS))
+        when(service.changeRequestStatus(USER_ID_1, BOOKING_ID, BOOKING_STATUS))
                 .thenThrow(BadRequestException.class);
 
         mockMvc.perform(patch("/bookings/{bookingId}", BOOKING_ID)
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .param("approved", "true"))
                 .andExpect(status().isBadRequest());
 
         verify(service, times(1))
-                .changeRequestStatus(USER_ID, BOOKING_ID, BOOKING_STATUS);
+                .changeRequestStatus(USER_ID_1, BOOKING_ID, BOOKING_STATUS);
     }
 
     @Test
     @SneakyThrows
     void changeStatusWithWrongUserIdShouldReturnNotFound() {
-        long wrongUserId = USER_ID + 1;
+        long wrongUserId = USER_ID_1 + 1;
 
         when(service.changeRequestStatus(wrongUserId, BOOKING_ID, BOOKING_STATUS))
                 .thenThrow(NotFoundException.class);
@@ -342,17 +342,17 @@ class BookingControllerTest {
                 .id(BOOKING_ID)
                 .build();
 
-        when(service.getRequestById(USER_ID, BOOKING_ID))
+        when(service.getRequestById(USER_ID_1, BOOKING_ID))
                 .thenReturn(map(response));
 
         mockMvc.perform(get("/bookings/{bookingId}", BOOKING_ID)
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID))
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
 
         verify(service, times(1))
-                .getRequestById(USER_ID, BOOKING_ID);
+                .getRequestById(USER_ID_1, BOOKING_ID);
     }
 
     @Test
@@ -360,21 +360,21 @@ class BookingControllerTest {
     void getByIdWithWrongBookingIdShouldReturnNotFound() {
         long wrongBookingId = BOOKING_ID + 1;
 
-        when(service.getRequestById(USER_ID, wrongBookingId))
+        when(service.getRequestById(USER_ID_1, wrongBookingId))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(get("/bookings/{bookingId}", wrongBookingId)
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID))
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1))
                 .andExpect(status().isNotFound());
 
         verify(service, times(1))
-                .getRequestById(USER_ID, wrongBookingId);
+                .getRequestById(USER_ID_1, wrongBookingId);
     }
 
     @Test
     @SneakyThrows
     void getByIdWithWrongUserIdShouldReturnNotFound() {
-        Long wrongUserId = USER_ID + 1;
+        Long wrongUserId = USER_ID_1 + 1;
 
         when(service.getRequestById(wrongUserId, BOOKING_ID))
                 .thenThrow(NotFoundException.class);
@@ -400,11 +400,11 @@ class BookingControllerTest {
     @Test
     @SneakyThrows
     void getAllRequestsWithCorrectRequestShouldReturnIsOkWithResponse() {
-        when(service.getAllRequests(USER_ID, STATE, FROM, SIZE))
+        when(service.getAllRequests(USER_ID_1, STATE, FROM, SIZE))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/bookings")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .param(STATE_REQUEST_PARAM, STATE.toString())
                         .param(FROM_REQUEST_PARAM, Integer.toString(FROM))
                         .param(SIZE_REQUEST_PARAM, Integer.toString(SIZE)))
@@ -413,7 +413,7 @@ class BookingControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getAllRequests(USER_ID, STATE, FROM, SIZE);
+                .getAllRequests(USER_ID_1, STATE, FROM, SIZE);
     }
 
     @Test
@@ -422,18 +422,18 @@ class BookingControllerTest {
         var expectedFrom = FROM;
         var expectedSize = SIZE;
 
-        when(service.getAllRequests(USER_ID, STATE, expectedFrom, expectedSize))
+        when(service.getAllRequests(USER_ID_1, STATE, expectedFrom, expectedSize))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/bookings")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .param(STATE_REQUEST_PARAM, STATE.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getAllRequests(USER_ID, STATE, expectedFrom, expectedSize);
+                .getAllRequests(USER_ID_1, STATE, expectedFrom, expectedSize);
     }
 
     @Test
@@ -443,17 +443,17 @@ class BookingControllerTest {
         var expectedFrom = FROM;
         var expectedSize = SIZE;
 
-        when(service.getAllRequests(USER_ID, expectedState, expectedFrom, expectedSize))
+        when(service.getAllRequests(USER_ID_1, expectedState, expectedFrom, expectedSize))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/bookings")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID))
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getAllRequests(USER_ID, expectedState, expectedFrom, expectedSize);
+                .getAllRequests(USER_ID_1, expectedState, expectedFrom, expectedSize);
     }
 
     @Test
@@ -462,7 +462,7 @@ class BookingControllerTest {
         var wrongFrom = -1;
 
         mockMvc.perform(get("/bookings")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .param(STATE_REQUEST_PARAM, STATE.toString())
                         .param(FROM_REQUEST_PARAM, Integer.toString(wrongFrom))
                         .param(SIZE_REQUEST_PARAM, Integer.toString(SIZE)))
@@ -478,7 +478,7 @@ class BookingControllerTest {
         var wrongSize = 0;
 
         mockMvc.perform(get("/bookings")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .param(STATE_REQUEST_PARAM, STATE.toString())
                         .param(FROM_REQUEST_PARAM, Integer.toString(FROM))
                         .param(SIZE_REQUEST_PARAM, Integer.toString(wrongSize)))
@@ -491,7 +491,7 @@ class BookingControllerTest {
     @Test
     @SneakyThrows
     void getAllRequestsWithWrongUserIdShouldReturnNotFound() {
-        var wrongUserId = USER_ID + 1;
+        var wrongUserId = USER_ID_1 + 1;
 
         when(service.getAllRequests(wrongUserId, STATE, FROM, SIZE))
                 .thenThrow(NotFoundException.class);
@@ -524,11 +524,11 @@ class BookingControllerTest {
     @Test
     @SneakyThrows
     void getAllRequestsForOwnerWithCorrectRequestShouldReturnIsOkWithResponse() {
-        when(service.getAllRequestsForOwner(USER_ID, STATE, FROM, SIZE))
+        when(service.getAllRequestsForOwner(USER_ID_1, STATE, FROM, SIZE))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/bookings/owner")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .param(STATE_REQUEST_PARAM, STATE.toString())
                         .param(FROM_REQUEST_PARAM, Integer.toString(FROM))
                         .param(SIZE_REQUEST_PARAM, Integer.toString(SIZE)))
@@ -537,7 +537,7 @@ class BookingControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getAllRequestsForOwner(USER_ID, STATE, FROM, SIZE);
+                .getAllRequestsForOwner(USER_ID_1, STATE, FROM, SIZE);
     }
 
     @Test
@@ -546,18 +546,18 @@ class BookingControllerTest {
         var expectedFrom = FROM;
         var expectedSize = SIZE;
 
-        when(service.getAllRequestsForOwner(USER_ID, STATE, expectedFrom, expectedSize))
+        when(service.getAllRequestsForOwner(USER_ID_1, STATE, expectedFrom, expectedSize))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/bookings/owner")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .param(STATE_REQUEST_PARAM, STATE.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getAllRequestsForOwner(USER_ID, STATE, expectedFrom, expectedSize);
+                .getAllRequestsForOwner(USER_ID_1, STATE, expectedFrom, expectedSize);
     }
 
     @Test
@@ -567,17 +567,17 @@ class BookingControllerTest {
         var expectedFrom = FROM;
         var expectedSize = SIZE;
 
-        when(service.getAllRequestsForOwner(USER_ID, expectedState, expectedFrom, expectedSize))
+        when(service.getAllRequestsForOwner(USER_ID_1, expectedState, expectedFrom, expectedSize))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/bookings/owner")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID))
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getAllRequestsForOwner(USER_ID, expectedState, expectedFrom, expectedSize);
+                .getAllRequestsForOwner(USER_ID_1, expectedState, expectedFrom, expectedSize);
     }
 
     @Test
@@ -586,7 +586,7 @@ class BookingControllerTest {
         var wrongFrom = -1;
 
         mockMvc.perform(get("/bookings/owner")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .param(STATE_REQUEST_PARAM, STATE.toString())
                         .param(FROM_REQUEST_PARAM, Integer.toString(wrongFrom))
                         .param(SIZE_REQUEST_PARAM, Integer.toString(SIZE)))
@@ -602,7 +602,7 @@ class BookingControllerTest {
         var wrongSize = 0;
 
         mockMvc.perform(get("/bookings/owner")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .param(STATE_REQUEST_PARAM, STATE.toString())
                         .param(FROM_REQUEST_PARAM, Integer.toString(FROM))
                         .param(SIZE_REQUEST_PARAM, Integer.toString(wrongSize)))
@@ -615,7 +615,7 @@ class BookingControllerTest {
     @Test
     @SneakyThrows
     void getAllRequestsForOwnerWithWrongUserIdShouldReturnNotFound() {
-        var wrongUserId = USER_ID + 1;
+        var wrongUserId = USER_ID_1 + 1;
 
         when(service.getAllRequestsForOwner(wrongUserId, STATE, FROM, SIZE))
                 .thenThrow(NotFoundException.class);

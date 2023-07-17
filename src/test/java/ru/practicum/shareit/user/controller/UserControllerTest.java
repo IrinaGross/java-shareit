@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.practicum.shareit.TestUtils.USER_ID;
+import static ru.practicum.shareit.TestUtils.USER_ID_1;
 import static ru.practicum.shareit.user.mapper.UserMapper.map;
 
 @WebMvcTest(UserController.class)
@@ -43,7 +43,7 @@ class UserControllerTest {
                 .email(USER_EMAIL)
                 .build();
         var response = UserDto.builder()
-                .id(USER_ID)
+                .id(USER_ID_1)
                 .name(USER_NAME)
                 .email(USER_EMAIL)
                 .build();
@@ -169,27 +169,27 @@ class UserControllerTest {
     @SneakyThrows
     void getUserWithCorrectRequestShouldReturnIsOkWithResponse() {
         var response = UserDto.builder()
-                .id(USER_ID)
+                .id(USER_ID_1)
                 .name(USER_NAME)
                 .email(USER_EMAIL)
                 .build();
 
-        when(service.getUser(USER_ID))
+        when(service.getUser(USER_ID_1))
                 .thenReturn(map(response, response.getId()));
 
-        mockMvc.perform(get("/users/{userId}", USER_ID))
+        mockMvc.perform(get("/users/{userId}", USER_ID_1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
 
         verify(service, times(1))
-                .getUser(USER_ID);
+                .getUser(USER_ID_1);
     }
 
     @Test
     @SneakyThrows
     void getUserWithWrongUserIdShouldReturnNotFound() {
-        var wrongUserId = USER_ID + 1;
+        var wrongUserId = USER_ID_1 + 1;
         when(service.getUser(wrongUserId))
                 .thenThrow(NotFoundException.class);
 
@@ -222,15 +222,15 @@ class UserControllerTest {
                 .name(USER_NEW_NAME)
                 .build();
         var response = UserDto.builder()
-                .id(USER_ID)
+                .id(USER_ID_1)
                 .name(USER_NEW_NAME)
                 .email(USER_EMAIL)
                 .build();
 
-        when(service.updateUser(map(request, USER_ID)))
+        when(service.updateUser(map(request, USER_ID_1)))
                 .thenReturn(map(response, response.getId()));
 
-        mockMvc.perform(patch("/users/{userId}", USER_ID)
+        mockMvc.perform(patch("/users/{userId}", USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -238,13 +238,13 @@ class UserControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
 
         verify(service, times(1))
-                .updateUser(map(request, USER_ID));
+                .updateUser(map(request, USER_ID_1));
     }
 
     @Test
     @SneakyThrows
     void updateWithWrongUserIdShouldReturnNotFound() {
-        var wrongUserId = USER_ID;
+        var wrongUserId = USER_ID_1;
         var request = UserDto.builder()
                 .name(USER_NEW_NAME)
                 .build();
@@ -265,19 +265,19 @@ class UserControllerTest {
     @SneakyThrows
     void deleteWithCorrectRequestShouldReturnIsOkWithResponse() {
         doNothing()
-                .when(service).deleteUser(USER_ID);
+                .when(service).deleteUser(USER_ID_1);
 
-        mockMvc.perform(delete("/users/{userId}", USER_ID))
+        mockMvc.perform(delete("/users/{userId}", USER_ID_1))
                 .andExpect(status().isOk());
 
         verify(service, times(1))
-                .deleteUser(USER_ID);
+                .deleteUser(USER_ID_1);
     }
 
     @Test
     @SneakyThrows
     void deleteWithWrongUserIdShouldReturnNotFound() {
-        var wrongUserId = USER_ID;
+        var wrongUserId = USER_ID_1;
         doThrow(NotFoundException.class)
                 .when(service).deleteUser(wrongUserId);
 
