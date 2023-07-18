@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.mapper;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.db.BookingEntity;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -10,7 +11,7 @@ import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.user.db.UserEntity;
 import ru.practicum.shareit.user.mapper.UserMapper;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BookingMapper {
 
     public static BookingDto mapToDto(Booking model) {

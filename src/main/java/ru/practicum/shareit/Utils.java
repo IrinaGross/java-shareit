@@ -1,11 +1,12 @@
 package ru.practicum.shareit;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Utils {
 
     public static final String X_SHARER_USER_ID_HEADER = "X-Sharer-User-Id";

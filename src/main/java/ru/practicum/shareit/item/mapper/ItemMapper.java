@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.mapper;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -15,7 +16,7 @@ import ru.practicum.shareit.user.mapper.UserMapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemMapper {
 
     @NonNull

@@ -7,11 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.Utils;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.db.ItemEntity;
 import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.mapper.UserMapper;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -104,5 +107,55 @@ class JpaItemRepositoryTest {
         var list = repository.searchBy("naME", Utils.newPage(FROM, SIZE));
         assertNotNull(list);
         assertEquals(3, list.size());
+    }
+
+    @Test
+    @DirtiesContext
+    void updateWithCorrectArgumentsShouldReturnItem() {
+        var item = ItemMapper.map(
+                (ItemEntity) em.createQuery("SELECT i FROM ItemEntity i WHERE i.id = 1")
+                        .getSingleResult()
+        ).toBuilder().name("new name").build();
+        Item updated = repository.update(USER_ID_1, item);
+
+        assertNotNull(updated);
+        assertEquals(item.getName(), updated.getName());
+    }
+
+    @Test
+    @DirtiesContext
+    void updateWithUnknownUserShouldThrowNotFoundException() {
+        var item = ItemMapper.map(
+                em.createQuery("SELECT i FROM ItemEntity i WHERE i.id = 1", ItemEntity.class)
+                        .getSingleResult()
+        ).toBuilder().name("new name").build();
+
+        assertThrows(NotFoundException.class, () -> repository.update(USER_ID_2, item));
+    }
+
+    @Test
+    @DirtiesContext
+    void deleteItemWithCorrectArgumentsShouldWorks() {
+        var items = getAll();
+        assertEquals(3, items.size());
+
+        repository.deleteItem(USER_ID_1, items.get(0).getId());
+
+        items = getAll();
+        assertEquals(2, items.size());
+    }
+
+    @Test
+    @DirtiesContext
+    void deleteItemWithWrongUserIdShouldThrowNotFoundException() {
+        var items = getAll();
+        assertEquals(3, items.size());
+
+        assertThrows(NotFoundException.class, () -> repository.deleteItem(USER_ID_2, items.get(0).getId()));
+    }
+
+    private List<ItemEntity> getAll() {
+        return em.createQuery("SELECT i FROM ItemEntity i", ItemEntity.class)
+                .getResultList();
     }
 }

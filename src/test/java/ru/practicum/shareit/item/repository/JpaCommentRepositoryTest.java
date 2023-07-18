@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.item.db.CommentEntity;
-import ru.practicum.shareit.item.db.ItemEntity;
+import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
-import ru.practicum.shareit.user.db.UserEntity;
 import ru.practicum.shareit.user.mapper.UserMapper;
 
 import javax.persistence.EntityManager;
@@ -26,18 +25,33 @@ class JpaCommentRepositoryTest {
 
     @BeforeEach
     void fill() {
-        UserEntity userEntity = UserMapper.mapToEntity(USER_1, null);
+        var userEntity = UserMapper.mapToEntity(USER_1, null);
         em.persist(userEntity);
-        ItemEntity item = ItemMapper.mapToEntity(ITEM_1, null, userEntity, null);
-        em.persist(item);
+        var itemEntity = ItemMapper.mapToEntity(ITEM_1, null, userEntity, null);
+        em.persist(itemEntity);
 
         var comment = CommentEntity.builder()
                 .text("text")
                 .createdAt(REQUEST_TIME)
                 .author(userEntity)
-                .item(item)
+                .item(itemEntity)
                 .build();
         repository.save(comment);
+    }
+
+    @Test
+    @DirtiesContext
+    void createWithCorrectArgumentsShouldReturnItem() {
+        var userEntity = UserMapper.mapToEntity(USER_2, null);
+        em.persist(userEntity);
+        var itemEntity = ItemMapper.mapToEntity(ITEM_2, null, userEntity, null);
+        em.persist(itemEntity);
+        var commentEntity = CommentMapper.mapToEntity(COMMENT, itemEntity, userEntity);
+        em.persist(commentEntity);
+
+        var comment = repository.create(ITEM_1, USER_1, COMMENT, ITEM_REQUEST);
+        assertNotNull(comment);
+        assertEquals(3L, comment.getId());
     }
 
     @Test

@@ -48,7 +48,7 @@ class UserControllerTest {
                 .email(USER_EMAIL)
                 .build();
 
-        when(service.addUser(map(request, null)))
+        when(service.addUser(any()))
                 .thenReturn(map(response, response.getId()));
 
         mockMvc.perform(post("/users")
@@ -103,7 +103,7 @@ class UserControllerTest {
                 .email(USER_EMAIL)
                 .build();
 
-        when(service.addUser(map(request, null)))
+        when(service.addUser(any()))
                 .thenThrow(ConflictException.class);
 
         mockMvc.perform(post("/users")
@@ -174,7 +174,7 @@ class UserControllerTest {
                 .email(USER_EMAIL)
                 .build();
 
-        when(service.getUser(USER_ID_1))
+        when(service.getUser(anyLong()))
                 .thenReturn(map(response, response.getId()));
 
         mockMvc.perform(get("/users/{userId}", USER_ID_1))
@@ -190,7 +190,7 @@ class UserControllerTest {
     @SneakyThrows
     void getUserWithWrongUserIdShouldReturnNotFound() {
         var wrongUserId = USER_ID_1 + 1;
-        when(service.getUser(wrongUserId))
+        when(service.getUser(anyLong()))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(get("/users/{userId}", wrongUserId))
@@ -227,7 +227,7 @@ class UserControllerTest {
                 .email(USER_EMAIL)
                 .build();
 
-        when(service.updateUser(map(request, USER_ID_1)))
+        when(service.updateUser(any()))
                 .thenReturn(map(response, response.getId()));
 
         mockMvc.perform(patch("/users/{userId}", USER_ID_1)
@@ -249,7 +249,7 @@ class UserControllerTest {
                 .name(USER_NEW_NAME)
                 .build();
 
-        when(service.updateUser(map(request, wrongUserId)))
+        when(service.updateUser(any()))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(patch("/users/{userId}", wrongUserId)
@@ -265,7 +265,7 @@ class UserControllerTest {
     @SneakyThrows
     void deleteWithCorrectRequestShouldReturnIsOkWithResponse() {
         doNothing()
-                .when(service).deleteUser(USER_ID_1);
+                .when(service).deleteUser(anyLong());
 
         mockMvc.perform(delete("/users/{userId}", USER_ID_1))
                 .andExpect(status().isOk());
@@ -279,7 +279,7 @@ class UserControllerTest {
     void deleteWithWrongUserIdShouldReturnNotFound() {
         var wrongUserId = USER_ID_1;
         doThrow(NotFoundException.class)
-                .when(service).deleteUser(wrongUserId);
+                .when(service).deleteUser(anyLong());
 
         mockMvc.perform(delete("/users/{userId}", wrongUserId))
                 .andExpect(status().isNotFound());
