@@ -2,6 +2,7 @@ package ru.practicum.shareit;
 
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
@@ -15,6 +16,7 @@ public class TestUtils {
     public static final Long ITEM_ID_2 = 2L;
     public static final long ITEM_REQUEST_ID = 1L;
     public static final Long BOOKING_ID = 1L;
+    public static final Long COMMENT_ID = 1L;
     public static final Integer SIZE = 10;
     public static final Integer FROM = 0;
     public static final LocalDateTime REQUEST_TIME = LocalDateTime.now();
@@ -60,5 +62,12 @@ public class TestUtils {
             .creator(USER_1)
             .createAt(REQUEST_TIME)
             .description("description")
+            .build();
+
+    public static final Comment COMMENT = Comment.builder()
+            .id(COMMENT_ID)
+            .text("ok")
+            .author(USER_1)
+            .createdDate(REQUEST_TIME)
             .build();
 }

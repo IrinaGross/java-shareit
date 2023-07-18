@@ -16,7 +16,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,8 +45,8 @@ class BookingServiceImplTest {
     @Test
     void newRequestWithCorrectArgumentsShouldReturnItem() {
         var booking = Booking.builder()
-                .start(LocalDateTime.now().plusDays(1))
-                .end(LocalDateTime.now().plusDays(2))
+                .start(REQUEST_TIME.plusDays(1))
+                .end(REQUEST_TIME.plusDays(2))
                 .build();
         when(itemRepository.getItem(anyLong())).thenReturn(ITEM_2);
         when(userRepository.getById(anyLong())).thenReturn(USER_1);
@@ -67,8 +66,8 @@ class BookingServiceImplTest {
     @Test
     void newRequestWithWrongItemIdShouldThrowNotFoundException() {
         var booking = Booking.builder()
-                .start(LocalDateTime.now().plusDays(1))
-                .end(LocalDateTime.now().plusDays(2))
+                .start(REQUEST_TIME.plusDays(1))
+                .end(REQUEST_TIME.plusDays(2))
                 .build();
 
         when(itemRepository.getItem(anyLong())).thenThrow(NotFoundException.class);
@@ -83,8 +82,8 @@ class BookingServiceImplTest {
     @Test
     void newRequestWithWrongItemRequestIdShouldThrowNotFoundException() {
         var booking = Booking.builder()
-                .start(LocalDateTime.now().plusDays(1))
-                .end(LocalDateTime.now().plusDays(2))
+                .start(REQUEST_TIME.plusDays(1))
+                .end(REQUEST_TIME.plusDays(2))
                 .build();
 
         when(itemRepository.getItem(anyLong())).thenReturn(ITEM_2);
@@ -100,8 +99,8 @@ class BookingServiceImplTest {
     @Test
     void newRequestWithWrongUserIdShouldThrowNotFoundException() {
         var booking = Booking.builder()
-                .start(LocalDateTime.now().plusDays(1))
-                .end(LocalDateTime.now().plusDays(2))
+                .start(REQUEST_TIME.plusDays(1))
+                .end(REQUEST_TIME.plusDays(2))
                 .build();
 
         when(itemRepository.getItem(anyLong())).thenReturn(ITEM_2);
@@ -118,8 +117,8 @@ class BookingServiceImplTest {
     @Test
     void newRequestWithStartEqualsEndThenThrowBadRequestException() {
         var model = Booking.builder()
-                .start(LocalDateTime.now())
-                .end(LocalDateTime.now())
+                .start(REQUEST_TIME)
+                .end(REQUEST_TIME)
                 .build();
 
         assertThrows(BadRequestException.class, () -> service.newRequest(USER_ID_1, ITEM_ID_1, model));
@@ -132,8 +131,8 @@ class BookingServiceImplTest {
     @Test
     void newRequestWithStartLessThatEndThenThrowBadRequestException() {
         var model = Booking.builder()
-                .start(LocalDateTime.now())
-                .end(LocalDateTime.now().minusHours(5))
+                .start(REQUEST_TIME)
+                .end(REQUEST_TIME.minusHours(5))
                 .build();
 
         assertThrows(BadRequestException.class, () -> service.newRequest(USER_ID_1, ITEM_ID_1, model));
@@ -146,8 +145,8 @@ class BookingServiceImplTest {
     @Test
     void newRequestWithOwnerIdEqualsUserIdThenThrowNotFoundException() {
         var model = Booking.builder()
-                .start(LocalDateTime.now().plusDays(1))
-                .end(LocalDateTime.now().plusDays(2))
+                .start(REQUEST_TIME.plusDays(1))
+                .end(REQUEST_TIME.plusDays(2))
                 .build();
 
         when(itemRepository.getItem(anyLong())).thenReturn(ITEM_1);
@@ -162,8 +161,8 @@ class BookingServiceImplTest {
     @Test
     void newRequestWithItemIsNotAvailableThenThrowBadRequestException() {
         var model = Booking.builder()
-                .start(LocalDateTime.now().plusDays(1))
-                .end(LocalDateTime.now().plusDays(2))
+                .start(REQUEST_TIME.plusDays(1))
+                .end(REQUEST_TIME.plusDays(2))
                 .build();
         var item = ITEM_2.toBuilder()
                 .available(false)
