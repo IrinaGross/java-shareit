@@ -8,6 +8,7 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class TestUtils {
     public static final Long USER_ID_1 = 1L;
@@ -53,6 +54,8 @@ public class TestUtils {
     public static final Booking BOOKING = Booking.builder()
             .id(BOOKING_ID)
             .item(ITEM_1)
+            .start(REQUEST_TIME.plusDays(1))
+            .end(REQUEST_TIME.plusDays(2))
             .booker(USER_1)
             .status(BookingStatus.WAITING)
             .build();
@@ -70,4 +73,8 @@ public class TestUtils {
             .author(USER_1)
             .createdDate(REQUEST_TIME)
             .build();
+
+    public static String asString(LocalDateTime dateTime) {
+        return dateTime.format(DateTimeFormatter.ISO_DATE_TIME);
+    }
 }
