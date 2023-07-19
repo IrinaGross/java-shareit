@@ -1,5 +1,7 @@
 package ru.practicum.shareit;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.model.Comment;
@@ -10,7 +12,8 @@ import ru.practicum.shareit.user.model.User;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class TestUtils {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class TestUtils {
     public static final Long USER_ID_1 = 1L;
     public static final Long USER_ID_2 = 2L;
     public static final Long ITEM_ID_1 = 1L;

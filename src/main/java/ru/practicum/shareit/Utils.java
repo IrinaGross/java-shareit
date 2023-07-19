@@ -7,7 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class Utils {
+public final class Utils {
 
     public static final String X_SHARER_USER_ID_HEADER = "X-Sharer-User-Id";
     public static final String FROM_REQUEST_PARAM = "from";
