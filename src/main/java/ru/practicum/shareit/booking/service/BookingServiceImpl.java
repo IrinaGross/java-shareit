@@ -1,9 +1,9 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.Utils;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -82,15 +82,15 @@ class BookingServiceImpl implements BookingService {
 
     @NonNull
     @Override
-    public List<Booking> getAllRequests(@NonNull Long userId, @NonNull BookingState state, @NonNull Integer from, @NonNull Integer size) {
+    public List<Booking> getAllRequests(@NonNull Long userId, @NonNull BookingState state, @NonNull Pageable pageable) {
         var user = userRepository.getById(userId);
-        return bookingRepository.findAllByUserId(user.getId(), state, Utils.newPage(from, size));
+        return bookingRepository.findAllByUserId(user.getId(), state, pageable);
     }
 
     @NonNull
     @Override
-    public List<Booking> getAllRequestsForOwner(@NonNull Long userId, @NonNull BookingState state, @NonNull Integer from, @NonNull Integer size) {
+    public List<Booking> getAllRequestsForOwner(@NonNull Long userId, @NonNull BookingState state, @NonNull Pageable pageable) {
         var user = userRepository.getById(userId);
-        return bookingRepository.findAllByItemUserId(user.getId(), state, Utils.newPage(from, size));
+        return bookingRepository.findAllByItemUserId(user.getId(), state, pageable);
     }
 }

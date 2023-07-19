@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import ru.practicum.shareit.Utils;
 import ru.practicum.shareit.item.db.ItemEntity;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.service.UserService;
@@ -33,7 +34,7 @@ class ItemServiceIntegrationTest {
         itemService.addNewItem(user.getId(), ITEM_1);
         itemService.addNewItem(user.getId(), ITEM_2);
 
-        var items = itemService.getItems(user.getId(), FROM, SIZE);
+        var items = itemService.getItems(user.getId(), Utils.newPage(FROM, SIZE));
 
         var entities = em.createQuery("SELECT i FROM ItemEntity i", ItemEntity.class)
                 .getResultList();

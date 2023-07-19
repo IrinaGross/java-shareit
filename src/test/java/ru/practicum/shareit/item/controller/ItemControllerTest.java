@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.Utils;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -44,7 +45,7 @@ class ItemControllerTest {
     @Test
     @SneakyThrows
     void getItemsWithCorrectRequestShouldReturnIsOkWithResponse() {
-        when(service.getItems(USER_ID_1, FROM, SIZE))
+        when(service.getItems(anyLong(), any()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/items")
@@ -56,16 +57,13 @@ class ItemControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getItems(USER_ID_1, FROM, SIZE);
+                .getItems(USER_ID_1, Utils.newPage(FROM, SIZE));
     }
 
     @Test
     @SneakyThrows
     void getItemsWithoutPaginationParamsShouldReturnIsOkWithResponse() {
-        var expectedFrom = FROM;
-        var expectedSize = SIZE;
-
-        when(service.getItems(USER_ID_1, expectedFrom, expectedSize))
+        when(service.getItems(anyLong(), any()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/items")
@@ -75,16 +73,13 @@ class ItemControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getItems(USER_ID_1, expectedFrom, expectedSize);
+                .getItems(USER_ID_1, Utils.newPage(FROM, SIZE));
     }
 
     @Test
     @SneakyThrows
     void getItemsWithoutPaginationAndStateParamsShouldReturnIsOkWithResponse() {
-        var expectedFrom = FROM;
-        var expectedSize = SIZE;
-
-        when(service.getItems(USER_ID_1, expectedFrom, expectedSize))
+        when(service.getItems(anyLong(), any()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/items")
@@ -94,7 +89,7 @@ class ItemControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getItems(USER_ID_1, expectedFrom, expectedSize);
+                .getItems(USER_ID_1, Utils.newPage(FROM, SIZE));
     }
 
     @Test
@@ -109,7 +104,7 @@ class ItemControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(service, never())
-                .getItems(anyLong(), anyInt(), anyInt());
+                .getItems(anyLong(), any());
     }
 
     @Test
@@ -124,7 +119,7 @@ class ItemControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(service, never())
-                .getItems(anyLong(), anyInt(), anyInt());
+                .getItems(anyLong(), any());
     }
 
     @Test
@@ -132,7 +127,7 @@ class ItemControllerTest {
     void getItemsWithWrongUserIdShouldReturnNotFound() {
         var wrongUserId = USER_ID_1 + 1;
 
-        when(service.getItems(wrongUserId, FROM, SIZE))
+        when(service.getItems(anyLong(), any()))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(get("/items")
@@ -142,7 +137,7 @@ class ItemControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(service, times(1))
-                .getItems(wrongUserId, FROM, SIZE);
+                .getItems(wrongUserId, Utils.newPage(FROM, SIZE));
     }
 
     @Test
@@ -154,7 +149,7 @@ class ItemControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(service, never())
-                .getItems(anyLong(), anyInt(), anyInt());
+                .getItems(anyLong(), any());
     }
 
     @Test
@@ -164,7 +159,7 @@ class ItemControllerTest {
                 .id(ITEM_ID_1)
                 .build();
 
-        when(service.getItem(USER_ID_1, ITEM_ID_1))
+        when(service.getItem(anyLong(), anyLong()))
                 .thenReturn(map(response, response.getId()));
 
         mockMvc.perform(get("/items/{itemId}", ITEM_ID_1)
@@ -182,7 +177,7 @@ class ItemControllerTest {
     void getItemWithWrongItemIdShouldReturnNotFound() {
         Long wrongItemId = ITEM_ID_1 + 1;
 
-        when(service.getItem(USER_ID_1, wrongItemId))
+        when(service.getItem(anyLong(), anyLong()))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(get("/items/{itemId}", wrongItemId)
@@ -198,7 +193,7 @@ class ItemControllerTest {
     void getItemWithWrongUserIdShouldReturnNotFound() {
         Long wrongUserId = USER_ID_1 + 1;
 
-        when(service.getItem(wrongUserId, ITEM_ID_1))
+        when(service.getItem(anyLong(), anyLong()))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(get("/items/{itemId}", ITEM_ID_1)
@@ -222,7 +217,7 @@ class ItemControllerTest {
     @Test
     @SneakyThrows
     void searchItemsWithCorrectRequestShouldReturnIsOkWithResponse() {
-        when(service.searchBy(SEARCH_QUERY, FROM, SIZE))
+        when(service.searchBy(anyString(), any()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/items/search")
@@ -234,7 +229,7 @@ class ItemControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .searchBy(SEARCH_QUERY, FROM, SIZE);
+                .searchBy(SEARCH_QUERY, Utils.newPage(FROM, SIZE));
     }
 
     @Test
@@ -242,7 +237,7 @@ class ItemControllerTest {
     void searchItemsWithEmptyQueryShouldReturnIsOkWithEmptyBody() {
         var emptyQuery = "";
 
-        when(service.searchBy(emptyQuery, FROM, SIZE))
+        when(service.searchBy(anyString(), any()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/items/search")
@@ -254,16 +249,13 @@ class ItemControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .searchBy(emptyQuery, FROM, SIZE);
+                .searchBy(emptyQuery, Utils.newPage(FROM, SIZE));
     }
 
     @Test
     @SneakyThrows
     void searchItemsWithoutPaginationParamsShouldReturnIsOkWithResponse() {
-        var expectedFrom = FROM;
-        var expectedSize = SIZE;
-
-        when(service.searchBy(SEARCH_QUERY, expectedFrom, expectedSize))
+        when(service.searchBy(anyString(), any()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/items/search")
@@ -273,17 +265,15 @@ class ItemControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .searchBy(SEARCH_QUERY, expectedFrom, expectedSize);
+                .searchBy(SEARCH_QUERY, Utils.newPage(FROM, SIZE));
     }
 
     @Test
     @SneakyThrows
     void searchItemsWithoutPaginationAndEmptyQueryParamsShouldReturnIsOkWithResponse() {
-        var expectedFrom = FROM;
-        var expectedSize = SIZE;
         var expectedQuery = "";
 
-        when(service.searchBy(expectedQuery, expectedFrom, expectedSize))
+        when(service.searchBy(anyString(), any()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/items/search")
@@ -293,7 +283,7 @@ class ItemControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .searchBy(expectedQuery, expectedFrom, expectedSize);
+                .searchBy(expectedQuery, Utils.newPage(FROM, SIZE));
     }
 
     @Test
@@ -308,7 +298,7 @@ class ItemControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(service, never())
-                .searchBy(anyString(), anyInt(), anyInt());
+                .searchBy(anyString(), any());
     }
 
     @Test
@@ -323,7 +313,7 @@ class ItemControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(service, never())
-                .searchBy(anyString(), anyInt(), anyInt());
+                .searchBy(anyString(), any());
     }
 
     @Test
@@ -341,7 +331,7 @@ class ItemControllerTest {
                 .available(ITEM_AVAILABLE)
                 .build();
 
-        when(service.addNewItem(USER_ID_1, map(request, request.getId())))
+        when(service.addNewItem(anyLong(), any()))
                 .thenReturn(map(response, response.getId()));
 
         mockMvc.perform(post("/items")
@@ -451,24 +441,23 @@ class ItemControllerTest {
     @Test
     @SneakyThrows
     void addItemWithWrongUserIdShouldReturnBadRequest() {
-        Long wrongUserId = USER_ID_1;
         var request = ItemDto.builder()
                 .name(ITEM_NAME)
                 .description(ITEM_DESC)
                 .available(ITEM_AVAILABLE)
                 .build();
 
-        when(service.addNewItem(wrongUserId, map(request, request.getId())))
+        when(service.addNewItem(anyLong(), any()))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(post("/items")
-                        .header(X_SHARER_USER_ID_HEADER, wrongUserId)
+                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound());
 
         verify(service, times(1))
-                .addNewItem(anyLong(), any());
+                .addNewItem(USER_ID_1, map(request, null));
     }
 
     @Test
@@ -502,7 +491,7 @@ class ItemControllerTest {
                 .available(ITEM_AVAILABLE)
                 .build();
 
-        when(service.updateItem(USER_ID_1, map(request, ITEM_ID_1)))
+        when(service.updateItem(anyLong(), any()))
                 .thenReturn(map(response, response.getId()));
 
         mockMvc.perform(patch("/items/{itemId}", ITEM_ID_1)
@@ -525,7 +514,7 @@ class ItemControllerTest {
                 .description(ITEM_NEW_DESC)
                 .build();
 
-        when(service.updateItem(USER_ID_1, map(request, wrongItemId)))
+        when(service.updateItem(anyLong(), any()))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(patch("/items/{itemId}", wrongItemId)
@@ -546,7 +535,7 @@ class ItemControllerTest {
                 .description(ITEM_NEW_DESC)
                 .build();
 
-        when(service.updateItem(wrongUserId, map(request, ITEM_ID_1)))
+        when(service.updateItem(anyLong(), any()))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(patch("/items/{itemId}", ITEM_ID_1)
@@ -592,7 +581,7 @@ class ItemControllerTest {
         var wrongItemId = ITEM_ID_1 + 1;
 
         doThrow(NotFoundException.class)
-                .when(service).deleteItem(USER_ID_1, wrongItemId);
+                .when(service).deleteItem(anyLong(), anyLong());
 
         mockMvc.perform(delete("/items/{itemId}", wrongItemId)
                         .header(X_SHARER_USER_ID_HEADER, USER_ID_1))
@@ -608,7 +597,7 @@ class ItemControllerTest {
         var wrongUserId = USER_ID_1 + 1;
 
         doThrow(NotFoundException.class)
-                .when(service).deleteItem(wrongUserId, ITEM_ID_1);
+                .when(service).deleteItem(anyLong(), anyLong());
 
         mockMvc.perform(delete("/items/{itemId}", ITEM_ID_1)
                         .header(X_SHARER_USER_ID_HEADER, wrongUserId))
@@ -640,7 +629,7 @@ class ItemControllerTest {
                 .created(REQUEST_TIME)
                 .build();
 
-        when(service.createComment(USER_ID_1, ITEM_ID_1, map(request)))
+        when(service.createComment(anyLong(), anyLong(), any()))
                 .thenReturn(map(response));
 
         mockMvc.perform(post("/items/{itemId}/comment", ITEM_ID_1)
@@ -663,7 +652,7 @@ class ItemControllerTest {
                 .text(COMMENT_TEXT)
                 .build();
 
-        when(service.createComment(USER_ID_1, wrongItemId, map(request)))
+        when(service.createComment(anyLong(), anyLong(), any()))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(post("/items/{itemId}/comment", wrongItemId)
@@ -684,7 +673,7 @@ class ItemControllerTest {
                 .text(COMMENT_TEXT)
                 .build();
 
-        when(service.createComment(wrongUserId, ITEM_ID_1, map(request)))
+        when(service.createComment(anyLong(), anyLong(), any()))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(post("/items/{itemId}/comment", ITEM_ID_1)

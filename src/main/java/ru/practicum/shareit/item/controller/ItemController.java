@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.Utils;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CreateItemGroup;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -31,7 +32,7 @@ public class ItemController {
             @RequestParam(name = FROM_REQUEST_PARAM, required = false, defaultValue = "0") @Min(0) @NonNull Integer from,
             @RequestParam(name = SIZE_REQUEST_PARAM, required = false, defaultValue = "10") @Min(1) @NonNull Integer size
     ) {
-        return itemService.getItems(userId, from, size)
+        return itemService.getItems(userId, Utils.newPage(from, size))
                 .stream()
                 .map(ItemMapper::mapToDto)
                 .collect(Collectors.toList());
@@ -51,7 +52,7 @@ public class ItemController {
             @RequestParam(name = FROM_REQUEST_PARAM, required = false, defaultValue = "0") @Min(0) @NonNull Integer from,
             @RequestParam(name = SIZE_REQUEST_PARAM, required = false, defaultValue = "10") @Min(1) @NonNull Integer size
     ) {
-        return itemService.searchBy(text, from, size)
+        return itemService.searchBy(text, Utils.newPage(from, size))
                 .stream()
                 .map(ItemMapper::mapToDto)
                 .collect(Collectors.toList());

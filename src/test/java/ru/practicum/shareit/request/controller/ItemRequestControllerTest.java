@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.Utils;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
@@ -45,7 +46,7 @@ class ItemRequestControllerTest {
                 .description(ITEM_REQUEST_DESCRIPTION)
                 .build();
 
-        when(service.create(USER_ID_1, map(request)))
+        when(service.create(anyLong(), any()))
                 .thenReturn(map(response));
 
         mockMvc.perform(post("/requests")
@@ -84,7 +85,7 @@ class ItemRequestControllerTest {
                 .description(ITEM_REQUEST_DESCRIPTION)
                 .build();
 
-        when(service.create(wrongUserId, map(request)))
+        when(service.create(anyLong(), any()))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(post("/requests")
@@ -116,7 +117,7 @@ class ItemRequestControllerTest {
     @Test
     @SneakyThrows
     void getAllForWithCorrectRequestShouldReturnIsOkWithResponse() {
-        when(service.getAll(USER_ID_1))
+        when(service.getAll(anyLong()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/requests")
@@ -134,7 +135,7 @@ class ItemRequestControllerTest {
     void getAllForWithWrongUserIdShouldReturnNotFound() {
         var wrongUserId = USER_ID_1;
 
-        when(service.getAll(wrongUserId))
+        when(service.getAll(anyLong()))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(get("/requests")
@@ -162,7 +163,7 @@ class ItemRequestControllerTest {
                 .id(ITEM_REQUEST_ID)
                 .build();
 
-        when(service.getById(USER_ID_1, ITEM_REQUEST_ID))
+        when(service.getById(anyLong(), anyLong()))
                 .thenReturn(map(response));
 
         mockMvc.perform(get("/requests/{requestId}", ITEM_REQUEST_ID)
@@ -180,7 +181,7 @@ class ItemRequestControllerTest {
     void getByIdWithWrongItemRequestIdShouldReturnNotFound() {
         var wrongItemRequestId = ITEM_REQUEST_ID + 1;
 
-        when(service.getById(USER_ID_1, wrongItemRequestId))
+        when(service.getById(anyLong(), anyLong()))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(get("/requests/{requestId}", wrongItemRequestId)
@@ -196,7 +197,7 @@ class ItemRequestControllerTest {
     void getByIdWithWrongUserIdShouldReturnNotFound() {
         var wrongUserId = USER_ID_1 + 1;
 
-        when(service.getById(wrongUserId, ITEM_REQUEST_ID))
+        when(service.getById(anyLong(), anyLong()))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(get("/requests/{requestId}", ITEM_REQUEST_ID)
@@ -220,7 +221,7 @@ class ItemRequestControllerTest {
     @Test
     @SneakyThrows
     void getAllWithCorrectRequestShouldReturnIsOkWithResponse() {
-        when(service.getAll(USER_ID_1, FROM, SIZE))
+        when(service.getAll(anyLong(), any()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/requests/all")
@@ -232,7 +233,7 @@ class ItemRequestControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getAll(USER_ID_1, FROM, SIZE);
+                .getAll(USER_ID_1, Utils.newPage(FROM, SIZE));
     }
 
     @Test
@@ -240,7 +241,7 @@ class ItemRequestControllerTest {
     void getAllWithWrongUserIdShouldReturnNotFound() {
         var wrongUserId = USER_ID_1;
 
-        when(service.getAll(wrongUserId, FROM, SIZE))
+        when(service.getAll(anyLong(), any()))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(get("/requests/all")
@@ -250,7 +251,7 @@ class ItemRequestControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(service, times(1))
-                .getAll(wrongUserId, FROM, SIZE);
+                .getAll(wrongUserId, Utils.newPage(FROM, SIZE));
     }
 
     @Test
@@ -262,16 +263,13 @@ class ItemRequestControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(service, never())
-                .getAll(anyLong(), anyInt(), anyInt());
+                .getAll(anyLong(), any());
     }
 
     @Test
     @SneakyThrows
     void getAllWithoutPaginationParamsShouldReturnIsOkWithResponse() {
-        var expectedFrom = FROM;
-        var expectedSize = SIZE;
-
-        when(service.getAll(USER_ID_1, expectedFrom, expectedSize))
+        when(service.getAll(anyLong(), any()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/requests/all")
@@ -281,7 +279,7 @@ class ItemRequestControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getAll(USER_ID_1, expectedFrom, expectedSize);
+                .getAll(USER_ID_1, Utils.newPage(FROM, SIZE));
     }
 
     @Test
@@ -296,7 +294,7 @@ class ItemRequestControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(service, never())
-                .getAll(anyLong(), anyInt(), anyInt());
+                .getAll(anyLong(), any());
     }
 
     @Test
@@ -311,6 +309,6 @@ class ItemRequestControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(service, never())
-                .getAll(anyLong(), anyInt(), anyInt());
+                .getAll(anyLong(), any());
     }
 }

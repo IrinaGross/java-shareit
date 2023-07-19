@@ -1,12 +1,12 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.BadRequestException;
-import ru.practicum.shareit.Utils;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
@@ -30,9 +30,9 @@ class ItemServiceImpl implements ItemService {
 
     @NonNull
     @Override
-    public List<Item> getItems(@NonNull Long userId, @NonNull Integer from, @NonNull Integer size) {
+    public List<Item> getItems(@NonNull Long userId, @NonNull Pageable pageable) {
         User user = userRepository.getById(userId);
-        return itemRepository.getItems(user.getId(), Utils.newPage(from, size))
+        return itemRepository.getItems(user.getId(), pageable)
                 .stream()
                 .map(it -> inflateMore(it, true))
                 .collect(Collectors.toList());
@@ -69,8 +69,8 @@ class ItemServiceImpl implements ItemService {
 
     @NonNull
     @Override
-    public List<Item> searchBy(@NonNull String text, @NonNull Integer from, @NonNull Integer size) {
-        return itemRepository.searchBy(text, Utils.newPage(from, size));
+    public List<Item> searchBy(@NonNull String text, @NonNull Pageable pageable) {
+        return itemRepository.searchBy(text, pageable);
     }
 
     @NonNull

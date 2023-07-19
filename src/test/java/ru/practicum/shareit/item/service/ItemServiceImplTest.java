@@ -49,7 +49,7 @@ class ItemServiceImplTest {
         when(userRepository.getById(anyLong())).thenReturn(USER_1);
         when(itemRepository.getItems(anyLong(), any())).thenReturn(Collections.emptyList());
 
-        var list = service.getItems(USER_ID_1, FROM, SIZE);
+        var list = service.getItems(USER_ID_1, Utils.newPage(FROM, SIZE));
 
         assertNotNull(list);
         assertEquals(0, list.size());
@@ -61,7 +61,7 @@ class ItemServiceImplTest {
     void getItemsWithWrongUserIdShouldThrowNotFoundException() {
         when(userRepository.getById(anyLong())).thenThrow(NotFoundException.class);
 
-        assertThrows(NotFoundException.class, () -> service.getItems(USER_ID_1, FROM, SIZE));
+        assertThrows(NotFoundException.class, () -> service.getItems(USER_ID_1, Utils.newPage(FROM, SIZE)));
         verify(userRepository, times(1)).getById(USER_ID_1);
         verify(itemRepository, never()).getItems(anyLong(), any());
     }
@@ -253,7 +253,7 @@ class ItemServiceImplTest {
 
         when(itemRepository.searchBy(anyString(), any())).thenReturn(Collections.singletonList(ITEM_1));
 
-        var items = service.searchBy(query, FROM, SIZE);
+        var items = service.searchBy(query, Utils.newPage(FROM, SIZE));
 
         assertNotNull(items);
         assertEquals(1, items.size());
@@ -266,7 +266,7 @@ class ItemServiceImplTest {
 
         when(itemRepository.searchBy(anyString(), any())).thenReturn(Collections.emptyList());
 
-        var items = service.searchBy(query, FROM, SIZE);
+        var items = service.searchBy(query, Utils.newPage(FROM, SIZE));
 
         assertNotNull(items);
         assertEquals(0, items.size());

@@ -101,7 +101,7 @@ class ItemRequestServiceImplTest {
         when(userRepository.getById(anyLong())).thenReturn(USER_1);
         when(itemRequestRepository.getAll(anyLong(), any())).thenReturn(Collections.emptyList());
 
-        var list = service.getAll(USER_ID_1, FROM, SIZE);
+        var list = service.getAll(USER_ID_1, Utils.newPage(FROM, SIZE));
 
         assertNotNull(list);
         assertEquals(0, list.size());
@@ -113,7 +113,7 @@ class ItemRequestServiceImplTest {
     void getAllWithPaginationWithWrongUserIdShouldThrowNotFoundException() {
         when(userRepository.getById(anyLong())).thenThrow(NotFoundException.class);
 
-        assertThrows(NotFoundException.class, () -> service.getAll(USER_ID_1, FROM, SIZE));
+        assertThrows(NotFoundException.class, () -> service.getAll(USER_ID_1, Utils.newPage(FROM, SIZE)));
         verify(userRepository, times(1)).getById(USER_ID_1);
         verify(itemRequestRepository, never()).getAll(anyLong(), any());
     }

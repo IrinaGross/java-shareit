@@ -1,9 +1,9 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.Utils;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -39,8 +39,8 @@ class ItemRequestServiceImpl implements ItemRequestService {
 
     @NonNull
     @Override
-    public List<ItemRequest> getAll(@NonNull Long userId, @NonNull Integer from, @NonNull Integer size) {
+    public List<ItemRequest> getAll(@NonNull Long userId, @NonNull Pageable pageable) {
         userRepository.getById(userId);
-        return itemRequestRepository.getAll(userId, Utils.newPage(from, size));
+        return itemRequestRepository.getAll(userId, pageable);
     }
 }

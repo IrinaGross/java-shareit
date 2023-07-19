@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.Utils;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -400,7 +401,7 @@ class BookingControllerTest {
     @Test
     @SneakyThrows
     void getAllRequestsWithCorrectRequestShouldReturnIsOkWithResponse() {
-        when(service.getAllRequests(anyLong(), any(), anyInt(), anyInt()))
+        when(service.getAllRequests(anyLong(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/bookings")
@@ -413,13 +414,13 @@ class BookingControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getAllRequests(USER_ID_1, STATE, FROM, SIZE);
+                .getAllRequests(USER_ID_1, STATE, Utils.newPage(FROM, SIZE));
     }
 
     @Test
     @SneakyThrows
     void getAllRequestsWithUnknownStateShouldThrowUnsupportedStatusException() {
-        when(service.getAllRequests(anyLong(), any(), anyInt(), anyInt()))
+        when(service.getAllRequests(anyLong(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/bookings")
@@ -430,13 +431,13 @@ class BookingControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(service, never())
-                .getAllRequests(anyLong(), any(), anyInt(), anyInt());
+                .getAllRequests(anyLong(), any(), any());
     }
 
     @Test
     @SneakyThrows
     void getAllRequestsWithoutPaginationParamsShouldReturnIsOkWithResponse() {
-        when(service.getAllRequests(anyLong(), any(), anyInt(), anyInt()))
+        when(service.getAllRequests(anyLong(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/bookings")
@@ -447,13 +448,13 @@ class BookingControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getAllRequests(USER_ID_1, STATE, FROM, SIZE);
+                .getAllRequests(USER_ID_1, STATE, Utils.newPage(FROM, SIZE));
     }
 
     @Test
     @SneakyThrows
     void getAllRequestsWithoutPaginationAndStateParamsShouldReturnIsOkWithResponse() {
-        when(service.getAllRequests(anyLong(), any(), anyInt(), anyInt()))
+        when(service.getAllRequests(anyLong(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/bookings")
@@ -463,7 +464,7 @@ class BookingControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getAllRequests(USER_ID_1, STATE, FROM, SIZE);
+                .getAllRequests(USER_ID_1, STATE, Utils.newPage(FROM, SIZE));
     }
 
     @Test
@@ -479,7 +480,7 @@ class BookingControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(service, never())
-                .getAllRequests(anyLong(), any(), anyInt(), anyInt());
+                .getAllRequests(anyLong(), any(), any());
     }
 
     @Test
@@ -495,7 +496,7 @@ class BookingControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(service, never())
-                .getAllRequests(anyLong(), any(), anyInt(), anyInt());
+                .getAllRequests(anyLong(), any(), any());
     }
 
     @Test
@@ -503,7 +504,7 @@ class BookingControllerTest {
     void getAllRequestsWithWrongUserIdShouldReturnNotFound() {
         var wrongUserId = USER_ID_1 + 1;
 
-        when(service.getAllRequests(anyLong(), any(), anyInt(), anyInt()))
+        when(service.getAllRequests(anyLong(), any(), any()))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(get("/bookings")
@@ -514,7 +515,7 @@ class BookingControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(service, times(1))
-                .getAllRequests(wrongUserId, STATE, FROM, SIZE);
+                .getAllRequests(wrongUserId, STATE, Utils.newPage(FROM, SIZE));
     }
 
 
@@ -528,13 +529,13 @@ class BookingControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(service, never())
-                .getAllRequests(anyLong(), any(), anyInt(), anyInt());
+                .getAllRequests(anyLong(), any(), any());
     }
 
     @Test
     @SneakyThrows
     void getAllRequestsForOwnerWithCorrectRequestShouldReturnIsOkWithResponse() {
-        when(service.getAllRequestsForOwner(anyLong(), any(), anyInt(), anyInt()))
+        when(service.getAllRequestsForOwner(anyLong(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/bookings/owner")
@@ -547,13 +548,13 @@ class BookingControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getAllRequestsForOwner(USER_ID_1, STATE, FROM, SIZE);
+                .getAllRequestsForOwner(USER_ID_1, STATE, Utils.newPage(FROM, SIZE));
     }
 
     @Test
     @SneakyThrows
     void getAllRequestsForOwnerWithoutPaginationParamsShouldReturnIsOkWithResponse() {
-        when(service.getAllRequestsForOwner(anyLong(), any(), anyInt(), anyInt()))
+        when(service.getAllRequestsForOwner(anyLong(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/bookings/owner")
@@ -564,13 +565,13 @@ class BookingControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getAllRequestsForOwner(USER_ID_1, STATE, FROM, SIZE);
+                .getAllRequestsForOwner(USER_ID_1, STATE, Utils.newPage(FROM, SIZE));
     }
 
     @Test
     @SneakyThrows
     void getAllRequestsForOwnerWithoutPaginationAndStateParamsShouldReturnIsOkWithResponse() {
-        when(service.getAllRequestsForOwner(anyLong(), any(), anyInt(), anyInt()))
+        when(service.getAllRequestsForOwner(anyLong(), any(), any()))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/bookings/owner")
@@ -580,7 +581,7 @@ class BookingControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(Collections.emptyList())));
 
         verify(service, times(1))
-                .getAllRequestsForOwner(USER_ID_1, STATE, FROM, SIZE);
+                .getAllRequestsForOwner(USER_ID_1, STATE, Utils.newPage(FROM, SIZE));
     }
 
     @Test
@@ -596,7 +597,7 @@ class BookingControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(service, never())
-                .getAllRequestsForOwner(anyLong(), any(), anyInt(), anyInt());
+                .getAllRequestsForOwner(anyLong(), any(), any());
     }
 
     @Test
@@ -612,7 +613,7 @@ class BookingControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(service, never())
-                .getAllRequestsForOwner(anyLong(), any(), anyInt(), anyInt());
+                .getAllRequestsForOwner(anyLong(), any(), any());
     }
 
     @Test
@@ -620,7 +621,7 @@ class BookingControllerTest {
     void getAllRequestsForOwnerWithWrongUserIdShouldReturnNotFound() {
         var wrongUserId = USER_ID_1 + 1;
 
-        when(service.getAllRequestsForOwner(anyLong(), any(), anyInt(), anyInt()))
+        when(service.getAllRequestsForOwner(anyLong(), any(), any()))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(get("/bookings/owner")
@@ -631,7 +632,7 @@ class BookingControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(service, times(1))
-                .getAllRequestsForOwner(wrongUserId, STATE, FROM, SIZE);
+                .getAllRequestsForOwner(wrongUserId, STATE, Utils.newPage(FROM, SIZE));
     }
 
     @Test
@@ -644,6 +645,6 @@ class BookingControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(service, never())
-                .getAllRequestsForOwner(anyLong(), any(), anyInt(), anyInt());
+                .getAllRequestsForOwner(anyLong(), any(), any());
     }
 }

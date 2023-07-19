@@ -5,6 +5,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.Utils;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.BookingState;
@@ -60,7 +61,7 @@ public class BookingController {
             @RequestParam(name = FROM_REQUEST_PARAM, required = false, defaultValue = DEFAULT_FROM_VALUE) @Min(0) @NonNull Integer from,
             @RequestParam(name = SIZE_REQUEST_PARAM, required = false, defaultValue = DEFAULT_SIZE_VALUE) @Min(1) @NonNull Integer size
     ) {
-        return bookingService.getAllRequests(userId, asBookingState(state), from, size)
+        return bookingService.getAllRequests(userId, asBookingState(state), Utils.newPage(from, size))
                 .stream()
                 .map(BookingMapper::mapToDto)
                 .collect(Collectors.toList());
@@ -73,7 +74,7 @@ public class BookingController {
             @RequestParam(name = FROM_REQUEST_PARAM, required = false, defaultValue = DEFAULT_FROM_VALUE) @Min(0) @NonNull Integer from,
             @RequestParam(name = SIZE_REQUEST_PARAM, required = false, defaultValue = DEFAULT_SIZE_VALUE) @Min(1) @NonNull Integer size
     ) {
-        return bookingService.getAllRequestsForOwner(userId, asBookingState(state), from, size)
+        return bookingService.getAllRequestsForOwner(userId, asBookingState(state), Utils.newPage(from, size))
                 .stream()
                 .map(BookingMapper::mapToDto)
                 .collect(Collectors.toList());

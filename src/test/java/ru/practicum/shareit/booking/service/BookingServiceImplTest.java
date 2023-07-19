@@ -315,7 +315,7 @@ class BookingServiceImplTest {
         when(userRepository.getById(anyLong())).thenReturn(USER_1);
         when(bookingRepository.findAllByUserId(anyLong(), any(), any())).thenReturn(Collections.emptyList());
 
-        var list = service.getAllRequests(USER_ID_1, BookingState.ALL, FROM, SIZE);
+        var list = service.getAllRequests(USER_ID_1, BookingState.ALL, Utils.newPage(FROM, SIZE));
         assertNotNull(list);
         assertEquals(0, list.size());
         verify(userRepository, times(1)).getById(USER_ID_1);
@@ -326,7 +326,7 @@ class BookingServiceImplTest {
     void getAllRequestsWithWrongUserIdShouldThrowNotFoundException() {
         when(userRepository.getById(anyLong())).thenThrow(NotFoundException.class);
 
-        assertThrows(NotFoundException.class, () -> service.getAllRequests(USER_ID_2, BookingState.ALL, FROM, SIZE));
+        assertThrows(NotFoundException.class, () -> service.getAllRequests(USER_ID_2, BookingState.ALL, Utils.newPage(FROM, SIZE)));
         verify(userRepository, times(1)).getById(USER_ID_2);
         verify(bookingRepository, never()).findAllByUserId(anyLong(), any(), any());
     }
@@ -336,7 +336,7 @@ class BookingServiceImplTest {
         when(userRepository.getById(anyLong())).thenReturn(USER_1);
         when(bookingRepository.findAllByItemUserId(anyLong(), any(), any())).thenReturn(Collections.emptyList());
 
-        var list = service.getAllRequestsForOwner(USER_ID_1, BookingState.ALL, FROM, SIZE);
+        var list = service.getAllRequestsForOwner(USER_ID_1, BookingState.ALL, Utils.newPage(FROM, SIZE));
         assertNotNull(list);
         assertEquals(0, list.size());
         verify(userRepository, times(1)).getById(USER_ID_1);
@@ -347,7 +347,7 @@ class BookingServiceImplTest {
     void getAllRequestsForOwnerWithWrongUserIdShouldThrowNotFoundException() {
         when(userRepository.getById(anyLong())).thenThrow(NotFoundException.class);
 
-        assertThrows(NotFoundException.class, () -> service.getAllRequestsForOwner(USER_ID_2, BookingState.ALL, FROM, SIZE));
+        assertThrows(NotFoundException.class, () -> service.getAllRequestsForOwner(USER_ID_2, BookingState.ALL, Utils.newPage(FROM, SIZE)));
         verify(userRepository, times(1)).getById(USER_ID_2);
         verify(bookingRepository, never()).findAllByItemUserId(anyLong(), any(), any());
     }
