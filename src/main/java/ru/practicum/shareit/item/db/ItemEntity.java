@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
+import ru.practicum.shareit.request.db.ItemRequestEntity;
 import ru.practicum.shareit.user.db.UserEntity;
 
 import javax.persistence.*;
@@ -34,4 +35,8 @@ public class ItemEntity {
     @ManyToOne
     @JoinColumn(name = "item_owner_id", nullable = false)
     private UserEntity user;
+
+    @ManyToOne
+    @JoinColumn(name = "item_request_id")
+    private ItemRequestEntity request;
 }

@@ -2,12 +2,15 @@ package ru.practicum.shareit.item.repository;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.db.CommentEntity;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.mapper.ItemRequestMapper;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
@@ -19,9 +22,10 @@ import java.util.stream.Collectors;
 interface JpaCommentRepository extends CommentRepository, CrudRepository<CommentEntity, Long> {
     @NonNull
     @Override
-    default Comment create(@NonNull Item item, @NonNull User user, @NonNull Comment comment) {
+    default Comment create(@NonNull Item item, @NonNull User user, @NonNull Comment comment, @Nullable ItemRequest request) {
         var userEntity = UserMapper.mapToEntity(user, user.getId());
-        var itemEntity = ItemMapper.mapToEntity(item, item.getId(), userEntity);
+        var requestEntity = ItemRequestMapper.mapToEntity(request);
+        var itemEntity = ItemMapper.mapToEntity(item, item.getId(), userEntity, requestEntity);
         var entity = save(CommentMapper.mapToEntity(comment, itemEntity, userEntity));
         return CommentMapper.map(entity);
     }

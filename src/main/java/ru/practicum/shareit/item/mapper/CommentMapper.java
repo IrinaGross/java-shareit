@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.mapper;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.db.CommentEntity;
 import ru.practicum.shareit.item.db.ItemEntity;
@@ -10,21 +11,23 @@ import ru.practicum.shareit.user.mapper.UserMapper;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommentMapper {
 
     public static Comment map(CommentDto dto) {
         return Comment.builder()
                 .id(dto.getId())
+                .createdDate(dto.getCreated())
                 .text(dto.getText())
                 .build();
     }
 
     public static CommentDto mapToDto(Comment comment) {
+        var author = comment.getAuthor();
         return CommentDto.builder()
                 .id(comment.getId())
                 .text(comment.getText())
-                .authorName(comment.getAuthor().getName())
+                .authorName(author == null ? null : author.getName())
                 .created(comment.getCreatedDate())
                 .build();
     }

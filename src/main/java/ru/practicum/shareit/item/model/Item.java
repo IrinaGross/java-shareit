@@ -18,4 +18,5 @@ public class Item {
     private final Booking last;
     private final Booking next;
     private final List<Comment> comments;
+    private final Long requestId;
 }

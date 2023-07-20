@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.Utils;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CreateItemGroup;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -12,11 +13,13 @@ import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.Const.X_SHARER_USER_ID_HEADER;
+import static ru.practicum.shareit.Utils.*;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/items")
@@ -24,8 +27,12 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public List<ItemDto> getItems(@RequestHeader(X_SHARER_USER_ID_HEADER) long userId) {
-        return itemService.getItems(userId)
+    public List<ItemDto> getItems(
+            @RequestHeader(X_SHARER_USER_ID_HEADER) long userId,
+            @RequestParam(name = FROM_REQUEST_PARAM, required = false, defaultValue = "0") @Min(0) @NonNull Integer from,
+            @RequestParam(name = SIZE_REQUEST_PARAM, required = false, defaultValue = "10") @Min(1) @NonNull Integer size
+    ) {
+        return itemService.getItems(userId, Utils.newPage(from, size))
                 .stream()
                 .map(ItemMapper::mapToDto)
                 .collect(Collectors.toList());
@@ -40,8 +47,12 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItems(@RequestParam(value = "text") String text) {
-        return itemService.searchBy(text)
+    public List<ItemDto> searchItems(
+            @RequestParam(name = SEARCH_REQUEST_PARAM) String text,
+            @RequestParam(name = FROM_REQUEST_PARAM, required = false, defaultValue = "0") @Min(0) @NonNull Integer from,
+            @RequestParam(name = SIZE_REQUEST_PARAM, required = false, defaultValue = "10") @Min(1) @NonNull Integer size
+    ) {
+        return itemService.searchBy(text, Utils.newPage(from, size))
                 .stream()
                 .map(ItemMapper::mapToDto)
                 .collect(Collectors.toList());

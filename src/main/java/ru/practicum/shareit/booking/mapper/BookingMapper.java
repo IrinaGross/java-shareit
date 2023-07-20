@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.mapper;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.db.BookingEntity;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -10,22 +11,25 @@ import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.user.db.UserEntity;
 import ru.practicum.shareit.user.mapper.UserMapper;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BookingMapper {
 
     public static BookingDto mapToDto(Booking model) {
+        var booker = model.getBooker();
+        var item = model.getItem();
         return BookingDto.builder()
                 .id(model.getId())
                 .start(model.getStart())
                 .end(model.getEnd())
                 .status(model.getStatus())
-                .booker(UserMapper.mapToDto(model.getBooker()))
-                .item(ItemMapper.mapToDto(model.getItem()))
+                .booker(booker == null ? null : UserMapper.mapToDto(booker))
+                .item(item == null ? null : ItemMapper.mapToDto(item))
                 .build();
     }
 
     public static Booking map(BookingDto dto) {
         return Booking.builder()
+                .id(dto.getId())
                 .start(dto.getStart())
                 .end(dto.getEnd())
                 .status(dto.getStatus())
