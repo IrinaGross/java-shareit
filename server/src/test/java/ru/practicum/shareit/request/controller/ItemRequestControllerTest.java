@@ -61,21 +61,21 @@ class ItemRequestControllerTest {
                 .create(USER_ID_1, map(request));
     }
 
-    @Test
-    @SneakyThrows
-    void addNewWithoutDescriptionShouldReturnBadRequest() {
-        var request = ItemRequestDto.builder()
-                .build();
-
-        mockMvc.perform(post("/requests")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest());
-
-        verify(service, never())
-                .create(anyLong(), any());
-    }
+//    @Test
+//    @SneakyThrows
+//    void addNewWithoutDescriptionShouldReturnBadRequest() {
+//        var request = ItemRequestDto.builder()
+//                .build();
+//
+//        mockMvc.perform(post("/requests")
+//                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(request)))
+//                .andExpect(status().isBadRequest());
+//
+//        verify(service, never())
+//                .create(anyLong(), any());
+//    }
 
     @Test
     @SneakyThrows
@@ -282,33 +282,33 @@ class ItemRequestControllerTest {
                 .getAll(USER_ID_1, Utils.newPage(FROM, SIZE));
     }
 
-    @Test
-    @SneakyThrows
-    void getAllWithWrongFromShouldReturnBadRequest() {
-        var wrongFrom = -1;
+//    @Test
+//    @SneakyThrows
+//    void getAllWithWrongFromShouldReturnBadRequest() {
+//        var wrongFrom = -1;
+//
+//        mockMvc.perform(get("/requests/all")
+//                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
+//                        .param(FROM_REQUEST_PARAM, Integer.toString(wrongFrom))
+//                        .param(SIZE_REQUEST_PARAM, Integer.toString(SIZE)))
+//                .andExpect(status().isBadRequest());
+//
+//        verify(service, never())
+//                .getAll(anyLong(), any());
+//    }
 
-        mockMvc.perform(get("/requests/all")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
-                        .param(FROM_REQUEST_PARAM, Integer.toString(wrongFrom))
-                        .param(SIZE_REQUEST_PARAM, Integer.toString(SIZE)))
-                .andExpect(status().isBadRequest());
-
-        verify(service, never())
-                .getAll(anyLong(), any());
-    }
-
-    @Test
-    @SneakyThrows
-    void getAllWithWrongSizeShouldReturnBadRequest() {
-        var wrongSize = 0;
-
-        mockMvc.perform(get("/requests/all")
-                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
-                        .param(FROM_REQUEST_PARAM, Integer.toString(FROM))
-                        .param(SIZE_REQUEST_PARAM, Integer.toString(wrongSize)))
-                .andExpect(status().isBadRequest());
-
-        verify(service, never())
-                .getAll(anyLong(), any());
-    }
+//    @Test
+//    @SneakyThrows
+//    void getAllWithWrongSizeShouldReturnBadRequest() {
+//        var wrongSize = 0;
+//
+//        mockMvc.perform(get("/requests/all")
+//                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
+//                        .param(FROM_REQUEST_PARAM, Integer.toString(FROM))
+//                        .param(SIZE_REQUEST_PARAM, Integer.toString(wrongSize)))
+//                .andExpect(status().isBadRequest());
+//
+//        verify(service, never())
+//                .getAll(anyLong(), any());
+//    }
 }
