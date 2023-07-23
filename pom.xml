@@ -24,6 +24,8 @@
 
     <properties>
         <java.version>11</java.version>
+
+        <versions.common>0.0.1-SNAPSHOT</versions.common>
     </properties>
 
     <dependencies>
