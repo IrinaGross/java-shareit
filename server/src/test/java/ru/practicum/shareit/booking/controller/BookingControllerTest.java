@@ -67,25 +67,6 @@ class BookingControllerTest {
                 .newRequest(USER_ID_1, ITEM_ID_1, map(request));
     }
 
-//    @Test
-//    @SneakyThrows
-//    void addRequestWithoutItemIdShouldReturnBadRequest() {
-//        var request = BookingDto.builder()
-//                .itemId(null)
-//                .start(REQUEST_TIME.plusDays(1L))
-//                .end(REQUEST_TIME.plusDays(2L))
-//                .build();
-//
-//        mockMvc.perform(post("/bookings")
-//                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(request)))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(service, never())
-//                .newRequest(anyLong(), anyLong(), any());
-//    }
-
     @Test
     @SneakyThrows
     void addRequestWithWrongItemIdShouldReturnNotFound() {
@@ -108,44 +89,6 @@ class BookingControllerTest {
         verify(service, times(1))
                 .newRequest(USER_ID_1, wrongItemId, map(request));
     }
-
-//    @Test
-//    @SneakyThrows
-//    void addRequestWithStartIsNullShouldReturnBadRequest() {
-//        var request = BookingDto.builder()
-//                .itemId(ITEM_ID_1)
-//                .start(null)
-//                .end(REQUEST_TIME.plusDays(2L))
-//                .build();
-//
-//        mockMvc.perform(post("/bookings")
-//                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(request)))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(service, never())
-//                .newRequest(anyLong(), anyLong(), any());
-//    }
-
-//    @Test
-//    @SneakyThrows
-//    void addRequestWithStartEqualEndShouldReturnBadRequest() {
-//        var request = BookingDto.builder()
-//                .itemId(ITEM_ID_1)
-//                .start(REQUEST_TIME)
-//                .end(REQUEST_TIME)
-//                .build();
-//
-//        mockMvc.perform(post("/bookings")
-//                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(request)))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(service, never())
-//                .newRequest(anyLong(), anyLong(), any());
-//    }
 
     @Test
     @SneakyThrows
@@ -467,38 +410,6 @@ class BookingControllerTest {
                 .getAllRequests(USER_ID_1, STATE, Utils.newPage(FROM, SIZE));
     }
 
-//    @Test
-//    @SneakyThrows
-//    void getAllRequestsWithWrongFromShouldReturnBadRequest() {
-//        var wrongFrom = -1;
-//
-//        mockMvc.perform(get("/bookings")
-//                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
-//                        .param(STATE_REQUEST_PARAM, STATE.toString())
-//                        .param(FROM_REQUEST_PARAM, Integer.toString(wrongFrom))
-//                        .param(SIZE_REQUEST_PARAM, Integer.toString(SIZE)))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(service, never())
-//                .getAllRequests(anyLong(), any(), any());
-//    }
-
-//    @Test
-//    @SneakyThrows
-//    void getAllRequestsWithWrongSizeShouldReturnBadRequest() {
-//        var wrongSize = 0;
-//
-//        mockMvc.perform(get("/bookings")
-//                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
-//                        .param(STATE_REQUEST_PARAM, STATE.toString())
-//                        .param(FROM_REQUEST_PARAM, Integer.toString(FROM))
-//                        .param(SIZE_REQUEST_PARAM, Integer.toString(wrongSize)))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(service, never())
-//                .getAllRequests(anyLong(), any(), any());
-//    }
-
     @Test
     @SneakyThrows
     void getAllRequestsWithWrongUserIdShouldReturnNotFound() {
@@ -583,38 +494,6 @@ class BookingControllerTest {
         verify(service, times(1))
                 .getAllRequestsForOwner(USER_ID_1, STATE, Utils.newPage(FROM, SIZE));
     }
-
-//    @Test
-//    @SneakyThrows
-//    void getAllRequestsForOwnerWithWrongFromShouldReturnBadRequest() {
-//        var wrongFrom = -1;
-//
-//        mockMvc.perform(get("/bookings/owner")
-//                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
-//                        .param(STATE_REQUEST_PARAM, STATE.toString())
-//                        .param(FROM_REQUEST_PARAM, Integer.toString(wrongFrom))
-//                        .param(SIZE_REQUEST_PARAM, Integer.toString(SIZE)))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(service, never())
-//                .getAllRequestsForOwner(anyLong(), any(), any());
-//    }
-
-//    @Test
-//    @SneakyThrows
-//    void getAllRequestsForOwnerWithWrongSizeShouldReturnBadRequest() {
-//        var wrongSize = 0;
-//
-//        mockMvc.perform(get("/bookings/owner")
-//                        .header(X_SHARER_USER_ID_HEADER, USER_ID_1)
-//                        .param(STATE_REQUEST_PARAM, STATE.toString())
-//                        .param(FROM_REQUEST_PARAM, Integer.toString(FROM))
-//                        .param(SIZE_REQUEST_PARAM, Integer.toString(wrongSize)))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(service, never())
-//                .getAllRequestsForOwner(anyLong(), any(), any());
-//    }
 
     @Test
     @SneakyThrows

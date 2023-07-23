@@ -62,45 +62,6 @@ class UserControllerTest {
                 .addUser(map(request, null));
     }
 
-//    @Test
-//    @SneakyThrows
-//    void createWithoutNameShouldReturnBadRequest() {
-//        var request = UserDto.builder()
-//                .email(USER_EMAIL)
-//                .build();
-//
-//        when(service.addUser(any()))
-//                .thenThrow(BadRequestException.class);
-//
-//        mockMvc.perform(post("/users")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(request)))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(service, times(1))
-//                .addUser(map(request, null));
-//    }
-
-//    @Test
-//    @SneakyThrows
-//    void createWithEmptyNameShouldReturnBadRequest() {
-//        var request = UserDto.builder()
-//                .name("")
-//                .email(USER_EMAIL)
-//                .build();
-//
-//        when(service.addUser(any()))
-//                .thenThrow(BadRequestException.class);
-//
-//        mockMvc.perform(post("/users")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(request)))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(service, times(1))
-//                .addUser(map(request, null));
-//    }
-
     @Test
     @SneakyThrows
     void createWithDuplicateEmailShouldReturnIsConflict() {
@@ -120,65 +81,6 @@ class UserControllerTest {
         verify(service, times(1))
                 .addUser(map(request, null));
     }
-
-//    @Test
-//    @SneakyThrows
-//    void createWithoutEmailShouldReturnBadRequest() {
-//        var request = UserDto.builder()
-//                .name(USER_NAME)
-//                .build();
-//
-//        when(service.addUser(any()))
-//                .thenThrow(BadRequestException.class);
-//
-//        mockMvc.perform(post("/users")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(request)))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(service, times(1))
-//                .addUser(map(request, null));
-//    }
-
-//    @Test
-//    @SneakyThrows
-//    void createWithWrongEmailShouldReturnBadRequest() {
-//        var request = UserDto.builder()
-//                .name(USER_NAME)
-//                .email("ds")
-//                .build();
-//
-//        when(service.addUser(any()))
-//                .thenThrow(BadRequestException.class);
-//
-//        mockMvc.perform(post("/users")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(request)))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(service, times(1))
-//                .addUser(map(request, null));
-//    }
-
-//    @Test
-//    @SneakyThrows
-//    void createWithEmptyEmailShouldReturnBadRequest() {
-//        var request = UserDto.builder()
-//                .name(USER_NAME)
-//                .email("")
-//                .build();
-//
-//        when(service.addUser(any()))
-//                .thenThrow(BadRequestException.class);
-//
-//        mockMvc.perform(post("/users")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(request)))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(service, times(1))
-//                .addUser(map(request, null));
-//    }
 
     @Test
     @SneakyThrows
